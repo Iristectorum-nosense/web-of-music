@@ -1,0 +1,91 @@
+$active-color: rgba(125, 197, 241, 0.932);
+
+$mainFont-color: #333333;
+$activeFont-color: #fff;
+$subFont-color: #999999;
+
+$center-padding: 15%;
+
+$mainFont-size: 16px;
+$subFont-size: 10px;
+
+// modify antd style
+#root .ant-btn {
+    background-color: $active-color;
+    box-shadow: none;
+}
+
+.ant-modal-root {
+    .ant-btn {
+        background-color: $activeFont-color;
+        color: $mainFont-color;
+        box-shadow: none;
+    }
+
+    .ant-modal-footer .ant-btn {
+        font-size: $subFont-size;
+    }
+
+    .ant-btn:hover {
+        background-color: $active-color;
+    }
+
+    .ant-tabs {
+
+        color: $mainFont-color;
+
+        .ant-tabs-nav-wrap {
+            justify-content: center;
+        }
+
+        .ant-tabs-ink-bar {
+            visibility: hidden;
+        }
+
+        .ant-tabs-tab,
+        .ant-tabs-tab-active {
+            font-size: $mainFont-size;
+        }
+
+        .ant-tabs-tab:hover,
+        .ant-tabs-nav .ant-tabs-nav-wrap .ant-tabs-nav-list .ant-tabs-tab-active .ant-tabs-tab-btn,
+        .ant-tabs-tab-btn:hover {
+            color: $active-color;
+        }
+    }
+
+    .ant-form {
+        padding: 5% 10%;
+
+        .ant-btn:hover {
+            background-color: $activeFont-color;
+            color: $active-color;
+            border-color: $active-color;
+        }
+
+        .ant-checkbox-inner,
+        .ant-checkbox-wrapper:not(.ant-checkbox-wrapper-disabled):hover .ant-checkbox-inner,
+        .ant-input-affix-wrapper:hover,
+        .ant-input-affix-wrapper-focused,
+        .ant-input:hover,
+        .ant-input:focus {
+            border-color: $active-color;
+        }
+
+        .ant-checkbox-checked .ant-checkbox-inner,
+        .ant-checkbox-wrapper:not(.ant-checkbox-wrapper-disabled):hover .ant-checkbox-checked:not(.ant-checkbox-disabled) .ant-checkbox-inner {
+            background-color: $active-color;
+        }
+
+        .ant-checkbox-checked::after {
+            border: 0px;
+        }
+
+        .ant-checkbox-checked-focused:hover {
+            border-color: $active-color;
+        }
+    }
+
+
+
+}
