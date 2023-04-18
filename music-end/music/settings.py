@@ -133,6 +133,8 @@ EMAIL_HOST = 'smtp.163.com'  # 发送邮件的邮箱的SMTP服务器，这里用
 EMAIL_PORT = 25  # 发件箱的SMTP服务器端口，默认是25
 EMAIL_HOST_USER = 'mytest1218@163.com'  # 发送邮件的邮箱地址
 EMAIL_HOST_PASSWORD = 'KLKQUSAWNVLOLMBU'  # 发送邮件的邮箱密码(这里使用的是授权码)
+DEFAULT_FROM_EMAIL = '享听音乐在线平台 <mytest1218@163.com>'  # 默认发件人和发件邮箱
+SERVER_EMAIL = 'mytest1218@163.com'  # 默认发件邮箱
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
