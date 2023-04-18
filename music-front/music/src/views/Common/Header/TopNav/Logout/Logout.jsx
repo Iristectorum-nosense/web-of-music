@@ -101,6 +101,7 @@ export default function Logout() {
                 },
                 method: 'byPw'
             }
+            //请求登录
             dispatch(loginAction(payload)).then((action) => {
                 if (JSON.stringify(action.payload) !== '{}') {
                     window.location.reload(true);

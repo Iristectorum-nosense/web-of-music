@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
-import React, { lazy } from "react";
+import React, { lazy, memo } from "react";
+import BeforeEach from "../components/BeforeEach/BeforeEach";
 
 const App = lazy(() => import('../App'));
 const Home = lazy(() => import('../views/Home/Home'));
@@ -11,7 +12,6 @@ const MyMusic = lazy(() => import('../views/MyMusic/MyMusic'));
 const Exception = lazy(() => import('../views/Common/Exception/Exception'));
 const NotFound = lazy(() => import('../views/Common/NotFound/NotFound'));
 const NotServer = lazy(() => import('../views/Common/NotServer/NotServer'));
-const BeforeEach = lazy(() => import('../components/BeforeEach/BeforeEach'));
 
 
 export const routes = [

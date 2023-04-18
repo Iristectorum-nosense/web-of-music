@@ -30,7 +30,7 @@ export const checkJWT = (data, method) => {
         case 'post': return instance.post(url,
             {
                 userId: data.userId,
-                userEmail: data.userEmail,
+                email: data.email,
             },
             {
                 headers: {
