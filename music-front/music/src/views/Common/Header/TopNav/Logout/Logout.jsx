@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useState, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button, Input, Checkbox, Modal, Tabs, Form, message } from 'antd';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
-import { loginAction } from '../../../../../store/slices/user';
+import { loginAction, setCaptchaTime, subCaptchaTime, stopCaptchaTime, changeCapBtn } from '../../../../../store/slices/user';
+import { captchaTimer } from '../../../../../utils/index';
+import { sendCaptcha } from '../../../../../api/login';
 
 export default function Logout() {
     const dispatch = useDispatch()
@@ -17,6 +19,11 @@ export default function Logout() {
         resetLoading: false,
         registerLoading: false,
     });
+
+    const captchaTime = useSelector((state) => state.user.captchaTime);
+    const captchaBtn = useSelector((state) => state.user.captchaBtn);
+
+    const loginEmailRef = useRef(null);
 
     const modalLogin = (props) => {
         switch (props) {
@@ -83,8 +90,68 @@ export default function Logout() {
     const passwordPattern = /^[a-zA-Z0-9~!@#$%^&*()_+`={}|:";'<>?,.]+$/g
     const nickNamePattern = /^[a-zA-Z0-9_\u4e00-\u9fa5]+$/g
 
-    const handleLoginByCap = (ev) => {
+    const captchaTimer = () => {
+        //验证码定时器
+        let time = 2;
+        dispatch(changeCapBtn(true))
+        dispatch(setCaptchaTime({
+            total: time,
+            count: time,
+            timerId: setInterval(() => {
+                dispatch(subCaptchaTime())
+            }, 1000)
+        }))
+        setTimeout(() => {
+            dispatch(stopCaptchaTime())
+            dispatch(changeCapBtn(false))
+        }, time * 1000)
+    };
 
+    const handleLoginSendCap = () => {
+        let inputRef = loginEmailRef.current.input;
+        if (emailPattern.test(inputRef.value)) {
+            captchaTimer()
+            sendCaptcha(inputRef.value, inputRef.id).then((res) => {
+                if (res.data.code === 200) {
+                    message.success(res.data.message)
+                }
+            }).catch(() => { })
+        } else {
+            message.error('请输入正确的账号')
+        }
+    };
+
+    const handleLoginByCap = (ev) => {
+        if (emailPattern.test(ev.loginEmailByCap) && captchaPattern.test(ev.loginCaptcha)) {
+            setLoading({
+                ...loading,
+                loginLoading: true,
+            })
+            let payload = {
+                data: {
+                    loginEmail: ev.loginEmailByCap,
+                    loginCaptcha: ev.loginCaptcha,
+                    remember: ev.loginRemByCap
+                },
+                method: 'byCap'
+            }
+            //请求登录
+            dispatch(loginAction(payload)).then((action) => {
+                if (JSON.stringify(action.payload) !== '{}') {
+                    setVisible({
+                        ...visible,
+                        loginVisible: false,
+                    })
+                    window.location.reload(true);
+                }
+                setLoading({
+                    ...loading,
+                    loginLoading: false,
+                })
+            })
+        } else {
+            message.error('请输入正确的账号或密码')
+        }
     };
 
     const handleLoginByPw = (ev) => {
@@ -120,6 +187,23 @@ export default function Logout() {
         }
     };
 
+    useEffect(() => {
+        //防止刷新导致定时器被清除
+        if (captchaTime.timerId) {
+            dispatch(setCaptchaTime({
+                total: captchaTime.count,
+                count: captchaTime.count,
+                timerId: setInterval(() => {
+                    dispatch(subCaptchaTime())
+                }, 1000)
+            }))
+            setTimeout(() => {
+                dispatch(stopCaptchaTime())
+                dispatch(changeCapBtn(false))
+            }, captchaTime.total * 1000)
+        }
+    }, [])
+
     return (
         <div>
             <Button type='primary' size='large' onClick={() => modalLogin('open')}
@@ -145,13 +229,16 @@ export default function Logout() {
                             <Form initialValues={{ loginRemByCap: true }} onFinish={(ev) => handleLoginByCap(ev)} >
                                 <Form.Item name='loginEmailByCap'
                                     rules={[{ required: true, message: '请输入邮箱' }]} >
-                                    <Input prefix={<MailOutlined className='site-form-item-icon' />} placeholder='邮箱.com/net' />
+                                    <Input prefix={<MailOutlined className='site-form-item-icon' />} placeholder='邮箱.com/net'
+                                        ref={loginEmailRef} />
                                 </Form.Item>
                                 <Form.Item name='loginCaptcha'
                                     rules={[{ required: true, message: '请输入验证码' }]}>
                                     <div style={{ display: 'inline' }}>
                                         <Input style={{ width: '50%' }} />
-                                        <Button style={{ width: '40%', marginLeft: '10%' }}>获取验证码</Button>
+                                        <Button style={{ width: '40%', marginLeft: '10%' }}
+                                            disabled={captchaBtn}
+                                            onClick={handleLoginSendCap}>{captchaTime.count > 0 ? `${captchaTime.count}s` : '获取验证码'}</Button>
                                     </div>
                                 </Form.Item>
                                 <Form.Item name='loginRemByCap' valuePropName='checked' noStyle>

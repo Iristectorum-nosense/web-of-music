@@ -1,27 +1,38 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { loginByPw, checkJWT } from "../../api/login";
+import { loginByPw, loginByCap, checkJWT } from "../../api/login";
 import { message } from "antd";
 
 export const loginAction = createAsyncThunk('user/loginAction', async (payload) => {
     switch (payload.method) {
         case 'byPw':
-            let token = await loginByPw(null, 'get');
-            let response = {}
-            if (Object.prototype.toString.call(token) === '[object Object]') {
+            let pwToken = await loginByPw(null, 'get');
+            let pwRes = {}
+            if (Object.prototype.toString.call(pwToken) === '[object Object]') {
                 await loginByPw(payload.data, 'post').then((res) => {
                     if (res.data.code === 405) {
                         message.error(res.data.message)
                     } else {
                         message.success('登录成功')
-                        response = res.data
+                        pwRes = res.data
                     }
                 }).catch(() => { })
             }
-            return response;
-        default:
+            return pwRes;
         case 'byCap':
-            console.log('byCap')
-            break;
+            let capToken = await loginByCap(null, 'get');
+            let capRes = {}
+            if (Object.prototype.toString.call(capToken) === '[object Object]') {
+                await loginByCap(payload.data, 'post').then((res) => {
+                    if (res.data.code === 405) {
+                        message.error(res.data.message)
+                    } else {
+                        message.success('登录成功')
+                        capRes = res.data
+                    }
+                }).catch(() => { })
+            }
+            return capRes;
+        default: return;
     }
 })
 
@@ -47,7 +58,13 @@ const userSlice = createSlice({
             userId: null,
             email: '',
             portrait: ''
-        }
+        },
+        captchaTime: {
+            total: 0,
+            count: 0,
+            timerId: null,
+        },
+        captchaBtn: false
     },
     reducers: {
         clearUserInfo(state) {
@@ -56,7 +73,27 @@ const userSlice = createSlice({
                 email: '',
                 portrait: ''
             }
-        }
+        },
+        setCaptchaTime(state, action) {
+            if (state.captchaTime.timerId) {  //必须写,因为重渲染会导致定时器被覆盖,而未清除
+                clearInterval(state.captchaTime.timerId);
+            }
+            state.captchaTime = action.payload
+        },
+        subCaptchaTime(state) {
+            state.captchaTime.count = state.captchaTime.count - 1
+        },
+        stopCaptchaTime(state) {
+            clearInterval(state.captchaTime.timerId);
+            state.captchaTime = {
+                total: 0,
+                count: 0,
+                timerId: null
+            }
+        },
+        changeCapBtn(state, action) {
+            state.captchaBtn = action.payload
+        },
     },
     extraReducers: (builder) => {
         builder.addCase(loginAction.fulfilled, (state, action) => {
@@ -73,6 +110,7 @@ const userSlice = createSlice({
     }
 })
 
-export const { clearUserInfo } = userSlice.actions;
+export const { clearUserInfo,
+    setCaptchaTime, subCaptchaTime, stopCaptchaTime, changeCapBtn } = userSlice.actions;
 
 export default userSlice.reducer;
