@@ -24,22 +24,22 @@ export const loginByPw = (data, method) => {
 };
 
 //验证jwt令牌
-export const checkJWT = (data, method) => {
-    const url = `user/loginJWT`;
-    switch (method) {
-        case 'post': return instance.post(url,
-            {
-                userId: data.userId,
-                email: data.email,
-            },
-            {
-                headers: {
-                    'X-CSRFToken': cookie.load('csrftoken')
-                }
-            }
-        );
-        default:
-        case 'get': return instance.get(url);
-    }
+// export const checkJWT = (data, method) => {
+//     const url = `user/loginJWT`;
+//     switch (method) {
+//         case 'post': return instance.post(url,
+//             {
+//                 userId: data.userId,
+//                 email: data.email,
+//             },
+//             {
+//                 headers: {
+//                     'X-CSRFToken': cookie.load('csrftoken')
+//                 }
+//             }
+//         );
+//         default:
+//         case 'get': return instance.get(url);
+//     }
 
-};
+// };

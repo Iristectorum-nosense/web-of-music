@@ -25,20 +25,20 @@ export const loginAction = createAsyncThunk('user/loginAction', async (payload) 
     }
 })
 
-export const checkJWTAction = createAsyncThunk('user/checkJWTAction', async (payload) => {
-    let token = await checkJWT(null, 'get');
-    let response = false
-    if (Object.prototype.toString.call(token) === '[object Object]') {
-        await checkJWT(payload, 'post').then((res) => {
-            if (res.data.code === 405) {
-                message.error(res.data.message)
-            } else {
-                response = true
-            }
-        }).catch(() => { })
-    }
-    return response;
-})
+// export const checkJWTAction = createAsyncThunk('user/checkJWTAction', async (payload) => {
+//     let token = await checkJWT(null, 'get');
+//     let response = false
+//     if (Object.prototype.toString.call(token) === '[object Object]') {
+//         await checkJWT(payload, 'post').then((res) => {
+//             if (res.data.code === 405) {
+//                 message.error(res.data.message)
+//             } else {
+//                 response = true
+//             }
+//         }).catch(() => { })
+//     }
+//     return response;
+// })
 
 const userSlice = createSlice({
     name: 'user',
@@ -50,6 +50,13 @@ const userSlice = createSlice({
         }
     },
     reducers: {
+        clearUserInfo(state) {
+            state.loginInfos = {
+                userId: null,
+                email: '',
+                portrait: ''
+            }
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(loginAction.fulfilled, (state, action) => {
@@ -57,15 +64,15 @@ const userSlice = createSlice({
                 state.loginInfos = action.payload.loginInfos
             }
         })
-        builder.addCase(checkJWTAction.fulfilled, (state, action) => {
-            // if (!action.payload) {
-            //     console.log(state.initialState)
-            //     state.loginInfos = state.initialState
-            // }
-        })
+        // builder.addCase(checkJWTAction.fulfilled, (state, action) => {
+        //     if (!action.payload) {
+        //         console.log(state.initialState)
+        //         state.loginInfos = state.initialState
+        //     }
+        // })
     }
 })
 
-export const { login } = userSlice.actions;
+export const { clearUserInfo } = userSlice.actions;
 
 export default userSlice.reducer;

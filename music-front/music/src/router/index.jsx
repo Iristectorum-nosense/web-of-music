@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
-import React, { lazy, memo } from "react";
+import React, { Suspense, lazy } from "react";
 import BeforeEach from "../components/BeforeEach/BeforeEach";
+import { Spin } from 'antd';
 
 const App = lazy(() => import('../App'));
 const Home = lazy(() => import('../views/Home/Home'));
@@ -82,10 +83,9 @@ export const routes = [
     },
     {
         path: '/myMusic',
-        element: React.createElement(BeforeEach, null, React.createElement(MyMusic)),
-        meta: {
-            auth: true
-        },
+        element: React.createElement(Suspense, {
+            fallback: <Spin tip='Loading' size='large' style={{ margin: '20% 50%' }} />
+        }, React.createElement(MyMusic)),
     },
 ];
 

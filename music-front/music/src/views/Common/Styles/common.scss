@@ -9,12 +9,23 @@ $center-padding: 15%;
 $mainFont-size: 16px;
 $subFont-size: 10px;
 
-// modify antd style
+// modify antd style in root
 #root .ant-btn {
     background-color: $active-color;
     box-shadow: none;
 }
 
+#root .ant-avatar {
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+}
+
+#root .ant-avatar>img {
+    width: 100%;
+}
+
+// modify antd style in modal
 .ant-modal-root {
     .ant-btn {
         background-color: $activeFont-color;

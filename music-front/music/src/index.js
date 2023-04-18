@@ -7,7 +7,6 @@ import router from './router';
 import { Provider } from 'react-redux';
 import store from './store';
 import './views/Common/Styles/common.scss';
-import { Spin } from 'antd';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

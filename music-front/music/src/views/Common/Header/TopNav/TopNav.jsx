@@ -6,7 +6,7 @@ import Login from './Login/Login';
 import Logout from './Logout/Logout';
 
 export default function TopNav() {
-    let token = cookie.load('jwtToken')
+    const token = cookie.load('jwtToken')
     return (
         <div className='topNav-wrapper'>
             <Link to='/' className='topNav-logo'>

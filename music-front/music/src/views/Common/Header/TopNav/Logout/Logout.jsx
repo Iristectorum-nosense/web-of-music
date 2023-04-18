@@ -104,11 +104,11 @@ export default function Logout() {
             //请求登录
             dispatch(loginAction(payload)).then((action) => {
                 if (JSON.stringify(action.payload) !== '{}') {
-                    window.location.reload(true);
                     setVisible({
                         ...visible,
                         loginVisible: false,
                     })
+                    window.location.reload(true);
                 }
                 setLoading({
                     ...loading,
@@ -155,7 +155,7 @@ export default function Logout() {
                                     </div>
                                 </Form.Item>
                                 <Form.Item name='loginRemByCap' valuePropName='checked' noStyle>
-                                    <Checkbox>记住密码</Checkbox>
+                                    <Checkbox>7天内自动登录</Checkbox>
                                 </Form.Item>
                                 <Form.Item>
                                     <Button htmlType='submit' loading={loading.loginLoading} style={{ marginTop: '5%', width: '100%' }}>登录</Button>
@@ -176,7 +176,7 @@ export default function Logout() {
                                     <Input prefix={<LockOutlined className='site-form-item-icon' />} type='password' />
                                 </Form.Item>
                                 <Form.Item name='loginRemByPw' valuePropName='checked' noStyle>
-                                    <Checkbox>记住密码</Checkbox>
+                                    <Checkbox>7天内自动登录</Checkbox>
                                 </Form.Item>
                                 <Form.Item>
                                     <Button htmlType='submit' loading={loading.loginLoading} style={{ marginTop: '5%', width: '100%' }}>登录</Button>
