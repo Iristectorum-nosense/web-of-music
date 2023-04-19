@@ -66,7 +66,7 @@ $subFont-size: 10px;
     }
 
     .ant-form {
-        padding: 5% 10%;
+        padding: 5% 10% 0 10%;
 
         .ant-btn:hover {
             background-color: $activeFont-color;
@@ -76,6 +76,8 @@ $subFont-size: 10px;
 
         .ant-checkbox-inner,
         .ant-checkbox-wrapper:not(.ant-checkbox-wrapper-disabled):hover .ant-checkbox-inner,
+        .ant-radio-inner,
+        .ant-radio-wrapper:not(.ant-radio-wrapper-disabled):hover .ant-radio-inner,
         .ant-input-affix-wrapper:hover,
         .ant-input-affix-wrapper-focused,
         .ant-input:hover,
@@ -84,7 +86,9 @@ $subFont-size: 10px;
         }
 
         .ant-checkbox-checked .ant-checkbox-inner,
-        .ant-checkbox-wrapper:not(.ant-checkbox-wrapper-disabled):hover .ant-checkbox-checked:not(.ant-checkbox-disabled) .ant-checkbox-inner {
+        .ant-checkbox-wrapper:not(.ant-checkbox-wrapper-disabled):hover .ant-checkbox-checked:not(.ant-checkbox-disabled) .ant-checkbox-inner,
+        .ant-radio-checked .ant-radio-inner,
+        .ant-radio-wrapper:not(.ant-radio-wrapper-disabled):hover .ant-radio-checked:not(.ant-radio-disabled) .ant-radio-inner {
             background-color: $active-color;
         }
 
@@ -95,6 +99,7 @@ $subFont-size: 10px;
         .ant-checkbox-checked-focused:hover {
             border-color: $active-color;
         }
+
     }
 
 

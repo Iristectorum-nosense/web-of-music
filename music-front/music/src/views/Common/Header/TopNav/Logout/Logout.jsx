@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Input, Checkbox, Modal, Tabs, Form, message } from 'antd';
-import { LockOutlined, MailOutlined } from '@ant-design/icons';
-import { loginAction, setCaptchaTime, subCaptchaTime, stopCaptchaTime, changeCapBtn } from '../../../../../store/slices/user';
-import { captchaTimer } from '../../../../../utils/index';
-import { sendCaptcha } from '../../../../../api/login';
+import { Button, Input, Checkbox, Modal, Tabs, Form, message, Radio } from 'antd';
+import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
+import { loginAction, registerAction, setCaptchaTime, subCaptchaTime, stopCaptchaTime, changeCapBtn } from '../../../../../store/slices/user';
+import { sendCaptcha } from '../../../../../api/user';
 
 export default function Logout() {
     const dispatch = useDispatch()
@@ -23,7 +22,8 @@ export default function Logout() {
     const captchaTime = useSelector((state) => state.user.captchaTime);
     const captchaBtn = useSelector((state) => state.user.captchaBtn);
 
-    const loginEmailRef = useRef(null);
+    const emailRef = useRef(null);
+    const [registerForm] = Form.useForm();
 
     const modalLogin = (props) => {
         switch (props) {
@@ -85,10 +85,10 @@ export default function Logout() {
         }
     };
 
-    const emailPattern = /^\w+@((\w+\.){1,2})(com|net)/g
+    const emailPattern = /^[\w+@((\w+\.){1,2})(com|net)]{8,32}$/g
     const captchaPattern = /^[0-9]{6}$/g
-    const passwordPattern = /^[a-zA-Z0-9~!@#$%^&*()_+`={}|:";'<>?,.]+$/g
-    const nickNamePattern = /^[a-zA-Z0-9_\u4e00-\u9fa5]+$/g
+    const passwordPattern = /^[a-zA-Z0-9~!@#$%^&*()_+`={}|:";'<>?,.]{6,18}$/g
+    const nickNamePattern = /^[a-zA-Z0-9_\u4e00-\u9fa5]{4,18}$/g
 
     const captchaTimer = () => {
         //验证码定时器
@@ -107,8 +107,8 @@ export default function Logout() {
         }, time * 1000)
     };
 
-    const handleLoginSendCap = () => {
-        let inputRef = loginEmailRef.current.input;
+    const handleSendCap = () => {
+        let inputRef = emailRef.current.input;
         if (emailPattern.test(inputRef.value)) {
             captchaTimer()
             sendCaptcha(inputRef.value, inputRef.id).then((res) => {
@@ -120,6 +120,13 @@ export default function Logout() {
             message.error('请输入正确的账号')
         }
     };
+
+    const passwordValidator = (_, value) => {
+        if (registerForm.getFieldValue('registerPassword') !== value) {
+            return Promise.reject('两次密码输入不一致')
+        }
+        return Promise.resolve()
+    }
 
     const handleLoginByCap = (ev) => {
         if (emailPattern.test(ev.loginEmailByCap) && captchaPattern.test(ev.loginCaptcha)) {
@@ -187,6 +194,43 @@ export default function Logout() {
         }
     };
 
+    const handleRegister = (ev) => {
+        registerForm.validateFields().then((values) => {
+            if (emailPattern.test(values.registerEmail) && passwordPattern.test(ev.registerPassword)
+                && nickNamePattern.test(ev.nickName && captchaPattern.test(ev.registerCaptcha))) {
+                setLoading({
+                    ...loading,
+                    registerLoading: true,
+                })
+                let payload = {
+                    registerEmail: ev.registerEmail,
+                    nickName: ev.nickName,
+                    gender: ev.gender,
+                    registerPassword: ev.registerPassword,
+                    registerCaptcha: ev.registerCaptcha,
+                }
+                //请求注册
+                dispatch(registerAction(payload)).then((action) => {
+                    if (JSON.stringify(action.payload) !== '{}') {
+                        setVisible({
+                            ...visible,
+                            registerVisible: false,
+                        })
+                        window.location.reload(true);
+                    }
+                    setLoading({
+                        ...loading,
+                        registerLoading: false,
+                    })
+                })
+            } else {
+                message.error('请输入正确的信息')
+            }
+        }).catch(() => {
+            ev.prevetDefault();
+        })
+    };
+
     useEffect(() => {
         //防止刷新导致定时器被清除
         if (captchaTime.timerId) {
@@ -205,7 +249,7 @@ export default function Logout() {
     }, [])
 
     return (
-        <div>
+        <>
             <Button type='primary' size='large' onClick={() => modalLogin('open')}
             >登录
             </Button>
@@ -230,7 +274,7 @@ export default function Logout() {
                                 <Form.Item name='loginEmailByCap'
                                     rules={[{ required: true, message: '请输入邮箱' }]} >
                                     <Input prefix={<MailOutlined className='site-form-item-icon' />} placeholder='邮箱.com/net'
-                                        ref={loginEmailRef} />
+                                        ref={emailRef} />
                                 </Form.Item>
                                 <Form.Item name='loginCaptcha'
                                     rules={[{ required: true, message: '请输入验证码' }]}>
@@ -238,7 +282,7 @@ export default function Logout() {
                                         <Input style={{ width: '50%' }} />
                                         <Button style={{ width: '40%', marginLeft: '10%' }}
                                             disabled={captchaBtn}
-                                            onClick={handleLoginSendCap}>{captchaTime.count > 0 ? `${captchaTime.count}s` : '获取验证码'}</Button>
+                                            onClick={handleSendCap}>{captchaTime.count > 0 ? `${captchaTime.count}s` : '获取验证码'}</Button>
                                     </div>
                                 </Form.Item>
                                 <Form.Item name='loginRemByCap' valuePropName='checked' noStyle>
@@ -256,7 +300,7 @@ export default function Logout() {
                             <Form initialValues={{ loginRemByPw: true }} onFinish={(ev) => handleLoginByPw(ev)}>
                                 <Form.Item name='loginEmailByPw'
                                     rules={[{ required: true, message: '请输入邮箱' }]} >
-                                    <Input prefix={<MailOutlined className='site-form-item-icon' />} placeholder='邮箱.com/net' />
+                                    <Input prefix={<MailOutlined className='site-form-item-icon' />} placeholder='xxx@xx.com/net' />
                                 </Form.Item>
                                 <Form.Item name='loginPassword'
                                     rules={[{ required: true, message: '请输入密码' }]}>
@@ -291,8 +335,51 @@ export default function Logout() {
                 onCancel={() => modalLogin('close')}
                 footer={null}
             >
-                111
+                <Form onFinish={(ev) => handleRegister(ev)} form={registerForm}
+                    initialValues={{ gender: 0 }}
+                    style={{ margin: '5% 0 10% 0' }}>
+                    <Form.Item name='registerEmail' label='邮&ensp;&ensp;箱'
+                        rules={[{ required: true, message: '请输入邮箱' }]} >
+                        <Input prefix={<MailOutlined className='site-form-item-icon' />} placeholder='xxx@xx.com/net'
+                            ref={emailRef} />
+                    </Form.Item>
+                    <Form.Item name='nickName' label='昵&ensp;&ensp;称'
+                        rules={[{ required: true, message: '请输入昵称' }]} >
+                        <Input prefix={<UserOutlined className='site-form-item-icon' />} placeholder='4~18位,不含特殊字符' />
+                    </Form.Item>
+                    <Form.Item name='gender' label='性&ensp;&ensp;别'
+                        rules={[{ required: true, message: '' }]}>
+                        <Radio.Group style={{ width: '100%' }}>
+                            <Radio value={1} style={{ width: '35%', marginLeft: '10%' }}>男</Radio>
+                            <Radio value={0} style={{ width: '35%', marginLeft: '10%' }}>女</Radio>
+                        </Radio.Group>
+                    </Form.Item>
+                    <Form.Item name='registerPassword' label='密&ensp;&ensp;码'
+                        rules={[{ required: true, message: '请输入密码' }]} >
+                        <Input prefix={<LockOutlined className='site-form-item-icon' />} type='password'
+                            placeholder='6~18位,仅含数字/字母/特殊字符' />
+                    </Form.Item>
+                    <Form.Item name='registerVerifyPw' label='确&ensp;&ensp;认'
+                        rules={[{ required: true, message: '' }, { validator: passwordValidator }]}
+                        validateTrigger='onBlur' >
+                        <Input prefix={<LockOutlined className='site-form-item-icon' />} type='password'
+                            placeholder='再次输入密码' />
+                    </Form.Item>
+                    <Form.Item name='registerCaptcha'
+                        label='验证码'
+                        rules={[{ required: true, message: '请输入验证码' }]} >
+                        <div style={{ display: 'inline' }}>
+                            <Input style={{ width: '50%' }} />
+                            <Button style={{ width: '40%', marginLeft: '10%' }}
+                                disabled={captchaBtn}
+                                onClick={handleSendCap}>{captchaTime.count > 0 ? `${captchaTime.count}s` : '获取验证码'}</Button>
+                        </div>
+                    </Form.Item>
+                    <Form.Item>
+                        <Button htmlType='submit' loading={loading.registerLoading} style={{ marginTop: '5%', width: '100%' }}>注册</Button>
+                    </Form.Item>
+                </Form>
             </Modal>
-        </div >
+        </ >
     )
 }

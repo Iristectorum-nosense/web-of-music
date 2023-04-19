@@ -15,7 +15,6 @@ export default function Login() {
         }
         if (ev.key === 'logout') {
             cookie.remove('jwtToken')
-            cookie.remove('csrftoken')
             dispatch(clearUserInfo())
             window.location.reload(true)
         }
@@ -48,7 +47,7 @@ export default function Login() {
             <Dropdown menu={{ items, onClick }} placement='bottomRight'>
                 {
                     loginInfos.portrait === 'none' || loginInfos.portrait === ''
-                        ? <Avatar src={userDefault}>111</Avatar>
+                        ? <Avatar src={userDefault}>default</Avatar>
                         : <Avatar >222</Avatar>
                 }
             </Dropdown>

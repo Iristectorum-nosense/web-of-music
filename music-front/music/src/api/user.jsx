@@ -5,10 +5,8 @@ import cookie from 'react-cookies';
 export const sendCaptcha = (data, method) => {
     const url = `captcha`;
     switch (method) {
-        case 'loginEmailByCap':
-            console.log(data)
-            return instance.get(url, { params: { loginEmail: data } });
-        case 'register': return instance.get(url, { params: { registerEmail: data } });
+        case 'loginEmailByCap': return instance.get(url, { params: { loginEmail: data } });
+        case 'registerEmail': return instance.get(url, { params: { registerEmail: data } });
         default: return;
     }
 }
@@ -57,7 +55,28 @@ export const loginByPw = (data, method) => {
 
 };
 
-
+//注册
+export const register = (data, method) => {
+    const url = `user/register`;
+    switch (method) {
+        case 'post': return instance.post(url,
+            {
+                registerEmail: data.registerEmail,
+                nickName: data.nickName,
+                gender: data.gender,
+                registerPassword: data.registerPassword,
+                registerCaptcha: data.registerCaptcha,
+            },
+            {
+                headers: {
+                    'X-CSRFToken': cookie.load('csrftoken')
+                }
+            }
+        );
+        default:
+        case 'get': return instance.get(url);
+    }
+};
 
 //验证jwt令牌
 // export const checkJWT = (data, method) => {

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { loginByPw, loginByCap, checkJWT } from "../../api/login";
+import { loginByPw, loginByCap, register } from "../../api/user";
+import cookie from 'react-cookies';
 import { message } from "antd";
 
 export const loginAction = createAsyncThunk('user/loginAction', async (payload) => {
@@ -13,6 +14,7 @@ export const loginAction = createAsyncThunk('user/loginAction', async (payload) 
                         message.error(res.data.message)
                     } else {
                         message.success('登录成功')
+                        cookie.remove('csrftoken')
                         pwRes = res.data
                     }
                 }).catch(() => { })
@@ -27,6 +29,7 @@ export const loginAction = createAsyncThunk('user/loginAction', async (payload) 
                         message.error(res.data.message)
                     } else {
                         message.success('登录成功')
+                        cookie.remove('csrftoken')
                         capRes = res.data
                     }
                 }).catch(() => { })
@@ -34,6 +37,23 @@ export const loginAction = createAsyncThunk('user/loginAction', async (payload) 
             return capRes;
         default: return;
     }
+})
+
+export const registerAction = createAsyncThunk('user/registerAction', async (payload) => {
+    let token = await register(null, 'get');
+    let response = {}
+    if (Object.prototype.toString.call(token) === '[object Object]') {
+        await register(payload, 'post').then((res) => {
+            if (res.data.code === 405) {
+                message.error(res.data.message)
+            } else {
+                message.success('注册成功')
+                cookie.remove('csrftoken')
+                response = res.data
+            }
+        }).catch(() => { })
+    }
+    return response;
 })
 
 // export const checkJWTAction = createAsyncThunk('user/checkJWTAction', async (payload) => {
