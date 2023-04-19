@@ -5,8 +5,8 @@ import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 import {
     loginAction, registerAction, resetPwAction,
     setCaptchaTime, subCaptchaTime, stopCaptchaTime, changeCapBtn
-} from '../../../../store/slices/user';
-import { sendCaptcha } from '../../../../api/user';
+} from '../../../../store/slices/login';
+import { sendCaptcha } from '../../../../api/login';
 
 export default function Logout() {
     const dispatch = useDispatch()
@@ -22,13 +22,13 @@ export default function Logout() {
         registerLoading: false,
     });
 
-    const captchaTime = useSelector((state) => state.user.captchaTime);
-    const captchaBtn = useSelector((state) => state.user.captchaBtn);
+    const captchaTime = useSelector((state) => state.login.captchaTime);
+    const captchaBtn = useSelector((state) => state.login.captchaBtn);
 
     const emailRef = useRef(null);
 
     const [registerForm] = Form.useForm();
-    const [resetForm] = Form.useForm();
+    const [resetPwForm] = Form.useForm();
 
     const modalLogin = (props) => {
         switch (props) {
@@ -134,7 +134,7 @@ export default function Logout() {
     };
 
     const resetPwValidator = (_, value) => {
-        if (resetForm.getFieldValue('resetPassword') !== value) {
+        if (resetPwForm.getFieldValue('resetPassword') !== value) {
             return Promise.reject('两次密码输入不一致')
         }
         return Promise.resolve()
@@ -243,8 +243,8 @@ export default function Logout() {
         })
     };
 
-    const handleReset = (ev) => {
-        resetForm.validateFields().then((values) => {
+    const handleResetPw = (ev) => {
+        resetPwForm.validateFields().then((values) => {
             if (emailPattern.test(values.resetEmail) && passwordPattern.test(ev.resetPassword)
                 && captchaPattern.test(ev.resetCaptcha)) {
                 setLoading({
@@ -375,7 +375,7 @@ export default function Logout() {
                     </Button>
                 ]}
             >
-                <Form onFinish={(ev) => handleReset(ev)} form={resetForm}
+                <Form onFinish={(ev) => handleResetPw(ev)} form={resetPwForm}
                     style={{ margin: '5% 0 10% 0' }}>
                     <Form.Item name='resetEmail' label='邮&ensp;&ensp;箱'
                         rules={[{ required: true, message: '请输入邮箱' }]} >

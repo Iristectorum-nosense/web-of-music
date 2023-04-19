@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
+import loginReducer from './slices/login';
 import userReducer from './slices/user';
 import {
     persistStore,
@@ -20,6 +21,7 @@ const persistConfig = {
 
 const store = configureStore({
     reducer: {
+        login: persistReducer(persistConfig, loginReducer),
         user: persistReducer(persistConfig, userReducer)
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({

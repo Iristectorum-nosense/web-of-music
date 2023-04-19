@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { clearUserInfo } from '../../../../store/slices/user';
+import { clearUserInfo } from '../../../../store/slices/login';
 import cookie from 'react-cookies';
 import { Avatar, Dropdown, Space } from 'antd';
 import userDefault from '../../../../source/user.png';
@@ -10,7 +10,7 @@ import { LogoutOutlined, SettingOutlined } from '@ant-design/icons';
 export default function Login() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
-    const loginInfos = useSelector((state) => state.user.loginInfos)
+    const loginInfos = useSelector((state) => state.login.loginInfos)
 
     const onClick = (ev) => {
         if (ev.key === 'setting') {
