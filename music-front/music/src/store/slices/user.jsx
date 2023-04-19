@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { loginByPw, loginByCap, register } from "../../api/user";
+import { loginByPw, loginByCap, register, resetPassword } from "../../api/user";
 import cookie from 'react-cookies';
 import { message } from "antd";
 
@@ -48,6 +48,23 @@ export const registerAction = createAsyncThunk('user/registerAction', async (pay
                 message.error(res.data.message)
             } else {
                 message.success('注册成功')
+                cookie.remove('csrftoken')
+                response = res.data
+            }
+        }).catch(() => { })
+    }
+    return response;
+})
+
+export const resetPwAction = createAsyncThunk('user/resetPwAction', async (payload) => {
+    let token = await resetPassword(null, 'get');
+    let response = {}
+    if (Object.prototype.toString.call(token) === '[object Object]') {
+        await resetPassword(payload, 'post').then((res) => {
+            if (res.data.code === 405) {
+                message.error(res.data.message)
+            } else {
+                message.success('修改密码成功')
                 cookie.remove('csrftoken')
                 response = res.data
             }

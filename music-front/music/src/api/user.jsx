@@ -7,6 +7,7 @@ export const sendCaptcha = (data, method) => {
     switch (method) {
         case 'loginEmailByCap': return instance.get(url, { params: { loginEmail: data } });
         case 'registerEmail': return instance.get(url, { params: { registerEmail: data } });
+        case 'resetEmail': return instance.get(url, { params: { resetEmail: data } });
         default: return;
     }
 }
@@ -77,6 +78,27 @@ export const register = (data, method) => {
         case 'get': return instance.get(url);
     }
 };
+
+//重置密码
+export const resetPassword = (data, method) => {
+    const url = `user/resetPw`;
+    switch (method) {
+        case 'post': return instance.post(url,
+            {
+                resetEmail: data.resetEmail,
+                resetPassword: data.resetPassword,
+                resetCaptcha: data.resetCaptcha,
+            },
+            {
+                headers: {
+                    'X-CSRFToken': cookie.load('csrftoken')
+                }
+            }
+        );
+        default:
+        case 'get': return instance.get(url);
+    }
+}
 
 //验证jwt令牌
 // export const checkJWT = (data, method) => {

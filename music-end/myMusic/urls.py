@@ -7,4 +7,5 @@ urlpatterns = [
     path('user/loginByCap', views.login_by_captcha),
     # path('user/loginJWT', views.check_jwt),
     path('user/register', views.register),
+    path('user/resetPw', views.resetPassword),
 ]

@@ -2,7 +2,10 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Input, Checkbox, Modal, Tabs, Form, message, Radio } from 'antd';
 import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
-import { loginAction, registerAction, setCaptchaTime, subCaptchaTime, stopCaptchaTime, changeCapBtn } from '../../../../../store/slices/user';
+import {
+    loginAction, registerAction, resetPwAction,
+    setCaptchaTime, subCaptchaTime, stopCaptchaTime, changeCapBtn
+} from '../../../../../store/slices/user';
 import { sendCaptcha } from '../../../../../api/user';
 
 export default function Logout() {
@@ -23,7 +26,9 @@ export default function Logout() {
     const captchaBtn = useSelector((state) => state.user.captchaBtn);
 
     const emailRef = useRef(null);
+
     const [registerForm] = Form.useForm();
+    const [resetForm] = Form.useForm();
 
     const modalLogin = (props) => {
         switch (props) {
@@ -92,7 +97,7 @@ export default function Logout() {
 
     const captchaTimer = () => {
         //验证码定时器
-        let time = 2;
+        let time = 10;
         dispatch(changeCapBtn(true))
         dispatch(setCaptchaTime({
             total: time,
@@ -121,12 +126,19 @@ export default function Logout() {
         }
     };
 
-    const passwordValidator = (_, value) => {
+    const registerPwValidator = (_, value) => {
         if (registerForm.getFieldValue('registerPassword') !== value) {
             return Promise.reject('两次密码输入不一致')
         }
         return Promise.resolve()
-    }
+    };
+
+    const resetPwValidator = (_, value) => {
+        if (resetForm.getFieldValue('resetPassword') !== value) {
+            return Promise.reject('两次密码输入不一致')
+        }
+        return Promise.resolve()
+    };
 
     const handleLoginByCap = (ev) => {
         if (emailPattern.test(ev.loginEmailByCap) && captchaPattern.test(ev.loginCaptcha)) {
@@ -197,7 +209,7 @@ export default function Logout() {
     const handleRegister = (ev) => {
         registerForm.validateFields().then((values) => {
             if (emailPattern.test(values.registerEmail) && passwordPattern.test(ev.registerPassword)
-                && nickNamePattern.test(ev.nickName && captchaPattern.test(ev.registerCaptcha))) {
+                && nickNamePattern.test(ev.nickName) && captchaPattern.test(ev.registerCaptcha)) {
                 setLoading({
                     ...loading,
                     registerLoading: true,
@@ -221,6 +233,41 @@ export default function Logout() {
                     setLoading({
                         ...loading,
                         registerLoading: false,
+                    })
+                })
+            } else {
+                message.error('请输入正确的信息')
+            }
+        }).catch(() => {
+            ev.prevetDefault();
+        })
+    };
+
+    const handleReset = (ev) => {
+        resetForm.validateFields().then((values) => {
+            if (emailPattern.test(values.resetEmail) && passwordPattern.test(ev.resetPassword)
+                && captchaPattern.test(ev.resetCaptcha)) {
+                setLoading({
+                    ...loading,
+                    resetLoading: true,
+                })
+                let payload = {
+                    resetEmail: ev.resetEmail,
+                    resetPassword: ev.resetPassword,
+                    resetCaptcha: ev.resetCaptcha,
+                }
+                //请求重置密码
+                dispatch(resetPwAction(payload)).then((action) => {
+                    if (JSON.stringify(action.payload) !== '{}') {
+                        setVisible({
+                            ...visible,
+                            loginVisible: true,
+                            resetVisible: false,
+                        })
+                    }
+                    setLoading({
+                        ...loading,
+                        resetLoading: false,
                     })
                 })
             } else {
@@ -318,7 +365,7 @@ export default function Logout() {
             </Modal>
             <Modal
                 open={visible.resetVisible}
-                onCancel={() => modalLogin('close')}
+                onCancel={() => modalReset('close')}
                 footer={[
                     <Button type='primary' key='login' style={{ float: 'left' }} onClick={() => modalLogin('open')}
                     >返回
@@ -328,11 +375,42 @@ export default function Logout() {
                     </Button>
                 ]}
             >
-                111
+                <Form onFinish={(ev) => handleReset(ev)} form={resetForm}
+                    style={{ margin: '5% 0 10% 0' }}>
+                    <Form.Item name='resetEmail' label='邮&ensp;&ensp;箱'
+                        rules={[{ required: true, message: '请输入邮箱' }]} >
+                        <Input prefix={<MailOutlined className='site-form-item-icon' />} placeholder='xxx@xx.com/net'
+                            ref={emailRef} />
+                    </Form.Item>
+                    <Form.Item name='resetPassword' label='密&ensp;&ensp;码'
+                        rules={[{ required: true, message: '请输入密码' }]} >
+                        <Input prefix={<LockOutlined className='site-form-item-icon' />} type='password'
+                            placeholder='6~18位,仅含数字/字母/特殊字符' />
+                    </Form.Item>
+                    <Form.Item name='resetVerifyPw' label='确&ensp;&ensp;认'
+                        rules={[{ required: true, message: '' }, { validator: resetPwValidator }]}
+                        validateTrigger='onBlur' >
+                        <Input prefix={<LockOutlined className='site-form-item-icon' />} type='password'
+                            placeholder='再次输入密码' />
+                    </Form.Item>
+                    <Form.Item name='resetCaptcha'
+                        label='验证码'
+                        rules={[{ required: true, message: '请输入验证码' }]} >
+                        <div style={{ display: 'inline' }}>
+                            <Input style={{ width: '50%' }} />
+                            <Button style={{ width: '40%', marginLeft: '10%' }}
+                                disabled={captchaBtn}
+                                onClick={handleSendCap}>{captchaTime.count > 0 ? `${captchaTime.count}s` : '获取验证码'}</Button>
+                        </div>
+                    </Form.Item>
+                    <Form.Item>
+                        <Button htmlType='submit' loading={loading.resetLoading} style={{ marginTop: '5%', width: '100%' }}>重置密码</Button>
+                    </Form.Item>
+                </Form>
             </Modal>
             <Modal
                 open={visible.registerVisible}
-                onCancel={() => modalLogin('close')}
+                onCancel={() => modalRegister('close')}
                 footer={null}
             >
                 <Form onFinish={(ev) => handleRegister(ev)} form={registerForm}
@@ -360,7 +438,7 @@ export default function Logout() {
                             placeholder='6~18位,仅含数字/字母/特殊字符' />
                     </Form.Item>
                     <Form.Item name='registerVerifyPw' label='确&ensp;&ensp;认'
-                        rules={[{ required: true, message: '' }, { validator: passwordValidator }]}
+                        rules={[{ required: true, message: '' }, { validator: registerPwValidator }]}
                         validateTrigger='onBlur' >
                         <Input prefix={<LockOutlined className='site-form-item-icon' />} type='password'
                             placeholder='再次输入密码' />

@@ -27,6 +27,8 @@ class Captcha(models.Model):
     loginTime = models.IntegerField(default=0)
     registerCaptcha = models.IntegerField(default=0)
     registerTime = models.IntegerField(default=0)
+    resetCaptcha = models.IntegerField(default=0)
+    resetTime = models.IntegerField(default=0)
 
     class Meta:
         db_table = 'captcha'
