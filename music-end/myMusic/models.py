@@ -11,7 +11,7 @@ class User(models.Model):
     score = models.IntegerField(default=0)
     nickname = models.CharField(max_length=32)
     gender = models.IntegerField(default=0)
-    password = models.CharField(max_length=32)
+    password = models.CharField(max_length=64)
     song_num = models.IntegerField(default=0)
     mv_num = models.IntegerField(default=0)
 

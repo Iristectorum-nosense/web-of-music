@@ -43,9 +43,9 @@ def login_by_password(request):
             return JsonResponse({'code': 405, 'message': '用户不存在'})
 
         userObj = User.objects.get(email=login_email)
-        # password = hashlib.sha256(login_password.encode('utf-8')).hexdigest()
+        password = hashlib.sha256(login_password.encode('utf-8')).hexdigest()
 
-        if login_password != userObj.password:
+        if password != userObj.password:
             return JsonResponse({'code': 405, 'message': '密码错误'})
 
         remember = json_body.get('remember', False)
@@ -100,14 +100,33 @@ def captcha(request):
         # 发送注册验证码
         register_email = request.GET.get('registerEmail', None)
         if register_email is not None:
+            sendedCap = random.randint(100000, 999999)
+            subject = '享听音乐验证码'
+            message = '您的注册验证码为：' + str(sendedCap) + ',5分钟内有效'
+            from_email = '享听音乐在线平台 <mytest1218@163.com>'
+
             if Captcha.objects.filter(email=register_email).exists():
-                sendedCap = random.randint(100000, 999999)
-                # 发送验证码
-                # 更改验证码和时间到数据库
+                recipient_list = [register_email]
+                success = send_mail(subject, message, from_email, recipient_list)
+                if success == 1:
+                    # 更改验证码和时间到数据库
+                    captchaObj = Captcha.objects.get(email=register_email)
+                    captchaObj.registerCaptcha = sendedCap
+                    captchaObj.registerTime = int(time.time())
+                    captchaObj.save()
+                    return JsonResponse({'code': 200, 'message': '验证码发送成功'})
+                else:
+                    return JsonResponse({'code': 503, 'message': 'Captcha send failed'})
             else:
-                sendedCap = random.randint(100000, 999999)
-                # 发送验证码
-                # 创建验证码和时间到数据库
+                recipient_list = [register_email]
+                success = send_mail(subject, message, from_email, recipient_list)
+                if success == 1:
+                    # 创建验证码和时间到数据库
+                    captchaObj = Captcha(email=register_email, registerCaptcha=sendedCap, registerTime=int(time.time()))
+                    captchaObj.save()
+                    return JsonResponse({'code': 200, 'message': '验证码发送成功'})
+                else:
+                    return JsonResponse({'code': 503, 'message': 'Captcha send failed'})
 
         return JsonResponse({'code': 400, 'message': 'Params error'})
     return JsonResponse({'code': 503, 'message': 'No method'})
@@ -136,6 +155,9 @@ def login_by_captcha(request):
             return JsonResponse({'code': 405, 'message': '请发送验证码'})
 
         captchaObj = Captcha.objects.get(email=login_email)
+        if captchaObj.loginCaptcha == 0:
+            return JsonResponse({'code': 405, 'message': '请发送验证码'})
+
         if int(login_captcha) != captchaObj.loginCaptcha:
             return JsonResponse({'code': 405, 'message': '验证码不正确'})
 
@@ -161,6 +183,57 @@ def login_by_captcha(request):
             response.set_cookie('jwtToken', jwtToken)
             return response
 
+
+@ensure_csrf_cookie
+def register(request):
+    # 获取csrftoken
+    if request.method == 'GET':
+        get_token(request)
+        return JsonResponse({'code': 200})
+
+    # 请求注册
+    if request.method == 'POST':
+        json_body = json.loads(request.body)
+        register_email = json_body.get('registerEmail', None)
+        nickName = json_body.get('nickName', None)
+        gender = json_body.get('gender', 0)
+        register_password = json_body.get('registerPassword', None)
+        register_captcha = json_body.get('registerCaptcha', None)
+
+        if register_email is None or nickName is None or register_password is None or register_captcha is None:
+            return JsonResponse({'code': 400, 'message': 'Params error'})
+
+        if User.objects.filter(email=register_email).exists():
+            return JsonResponse({'code': 405, 'message': '用户已存在'})
+
+        if not Captcha.objects.filter(email=register_email).exists():
+            return JsonResponse({'code': 405, 'message': '请发送验证码'})
+
+        captchaObj = Captcha.objects.get(email=register_email)
+        if captchaObj.registerCaptcha == 0:
+            return JsonResponse({'code': 405, 'message': '请发送验证码'})
+
+        if int(register_captcha) != captchaObj.registerCaptcha:
+            return JsonResponse({'code': 405, 'message': '验证码不正确'})
+
+        lastTime = datetime.datetime.fromtimestamp(captchaObj.registerTime)
+        delta = datetime.timedelta(minutes=5)  # 时间差定义
+        nowTime = datetime.datetime.now()
+
+        if nowTime - lastTime > delta:
+            return JsonResponse({'code': 405, 'message': '验证码已过期'})
+
+        password = hashlib.sha256(register_password.encode('utf-8')).hexdigest()
+        userObj = User(email=register_email, nickname=nickName, gender=gender, password=password)
+        userObj.save()
+
+        userObj = User.objects.get(email=register_email)
+        response = JsonResponse({'code': 200, 'loginInfos': {'userId': userObj.id, 'email': userObj.email,
+                                                                 'portrait': userObj.portrait.name}})
+        data = str(userObj.id) + register_email
+        jwtToken = createJWT(data)
+        response.set_cookie('jwtToken', jwtToken, expires=EXPIRES_TIME)
+        return response
 
 # @ensure_csrf_cookie
 # def check_jwt(request):
