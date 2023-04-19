@@ -5,8 +5,8 @@ import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 import {
     loginAction, registerAction, resetPwAction,
     setCaptchaTime, subCaptchaTime, stopCaptchaTime, changeCapBtn
-} from '../../../../../store/slices/user';
-import { sendCaptcha } from '../../../../../api/user';
+} from '../../../../store/slices/user';
+import { sendCaptcha } from '../../../../api/user';
 
 export default function Logout() {
     const dispatch = useDispatch()

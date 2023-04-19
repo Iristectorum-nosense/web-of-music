@@ -1,14 +1,13 @@
 import React from 'react';
 import Header from '../Common/Header/Header';
 import Footer from '../Common/Footer/Footer';
-import './myMusic.scss';
+import './MySetting.scss';
 
-
-export default function MyMusic() {
+export default function MySettng() {
     return (
         <>
             <Header></Header>
-            music
+            setting
             <Footer></Footer>
         </>
     )

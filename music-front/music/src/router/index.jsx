@@ -5,12 +5,11 @@ import { Spin } from 'antd';
 
 const App = lazy(() => import('../App'));
 const Home = lazy(() => import('../views/Home/Home'));
-const User = lazy(() => import('../views/User/User'));
 const Artist = lazy(() => import('../views/Artist/Artist'));
 const MV = lazy(() => import('../views/MV/MV'));
 const RankList = lazy(() => import('../views/RankList/RankList'));
+const MySettng = lazy(() => import('../views/MySetting/MySettng'));
 const MyMusic = lazy(() => import('../views/MyMusic/MyMusic'));
-const Exception = lazy(() => import('../views/Common/Exception/Exception'));
 const NotFound = lazy(() => import('../views/Common/NotFound/NotFound'));
 const NotServer = lazy(() => import('../views/Common/NotServer/NotServer'));
 
@@ -31,13 +30,6 @@ export const routes = [
                 }
             },
             {
-                path: 'user',
-                element: React.createElement(User),
-                meta: {
-                    auth: true
-                },
-            },
-            {
                 path: 'artist',
                 element: React.createElement(Artist),
                 meta: {
@@ -55,26 +47,26 @@ export const routes = [
                 path: 'rankList',
                 element: React.createElement(RankList),
                 meta: {
+                    auth: false
+                },
+            },
+            {
+                path: 'mySetting',
+                element: React.createElement(MySettng),
+                meta: {
                     auth: true
-                },
-            },
-            {
-                path: 'exception',
-                element: React.createElement(Exception),
-                meta: {
-                    auth: false
-                },
-            },
-            {
-                path: 'notFound',
-                element: React.createElement(NotFound),
-                meta: {
-                    auth: false
                 },
             },
             {
                 path: 'notServer',
                 element: React.createElement(NotServer),
+                meta: {
+                    auth: false
+                },
+            },
+            {
+                path: '*',
+                element: React.createElement(NotFound),
                 meta: {
                     auth: false
                 },
@@ -86,6 +78,10 @@ export const routes = [
         element: React.createElement(Suspense, {
             fallback: <Spin tip='Loading' size='large' style={{ margin: '20% 50%' }} />
         }, React.createElement(MyMusic)),
+    },
+    {
+        path: '*',
+        element: React.createElement(NotFound),
     },
 ];
 
