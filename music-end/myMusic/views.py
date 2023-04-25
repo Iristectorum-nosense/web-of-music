@@ -1,10 +1,11 @@
 import hashlib
 import json
+import os
 import time
 import jwt
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from .models import *
 from django.core.mail import send_mail
 import datetime
@@ -20,6 +21,13 @@ def createJWT(data):
     token = jwt.encode(payload, SECRET_KEY, algorithm='HS256')
 
     return str(token, encoding='utf8')
+
+
+def verifyJWT(token, data):
+    payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+    if data == payload.get('info'):
+        return 1
+    return 0
 
 
 # Create your views here.
@@ -49,8 +57,11 @@ def login_by_password(request):
             return JsonResponse({'code': 405, 'message': '密码错误'})
 
         remember = json_body.get('remember', False)
-        response = JsonResponse({'code': 200, 'loginInfos': {'userId': userObj.id, 'email': userObj.email,
-                                                                 'portrait': userObj.portrait.name}})
+        response = JsonResponse({'code': 200, 'loginInfos': {
+            'userId': userObj.id, 'email': userObj.email,
+            'portrait': userObj.portrait.name, 'nickname': userObj.nickname,
+            'gender': userObj.gender
+        }})
         if remember:
             data = str(userObj.id) + login_email
             jwtToken = createJWT(data)
@@ -201,8 +212,11 @@ def login_by_captcha(request):
 
         userObj = User.objects.get(email=login_email)
         remember = json_body.get('remember', False)
-        response = JsonResponse({'code': 200, 'loginInfos': {'userId': userObj.id, 'email': userObj.email,
-                                                                 'portrait': userObj.portrait.name}})
+        response = JsonResponse({'code': 200, 'loginInfos': {
+            'userId': userObj.id, 'email': userObj.email,
+            'portrait': userObj.portrait.name, 'nickname': userObj.nickname,
+            'gender': userObj.gender
+        }})
         if remember:
             data = str(userObj.id) + login_email
             jwtToken = createJWT(data)
@@ -260,8 +274,11 @@ def register(request):
         userObj.save()
 
         userObj = User.objects.get(email=register_email)
-        response = JsonResponse({'code': 200, 'loginInfos': {'userId': userObj.id, 'email': userObj.email,
-                                                                 'portrait': userObj.portrait.name}})
+        response = JsonResponse({'code': 200, 'loginInfos': {
+            'userId': userObj.id, 'email': userObj.email,
+            'portrait': userObj.portrait.name, 'nickname': userObj.nickname,
+            'gender': userObj.gender
+        }})
         data = str(userObj.id) + register_email
         jwtToken = createJWT(data)
         response.set_cookie('jwtToken', jwtToken, expires=EXPIRES_TIME)
@@ -270,7 +287,7 @@ def register(request):
 
 
 @ensure_csrf_cookie
-def resetPassword(request):
+def reset_password(request):
     # 获取csrftoken
     if request.method == 'GET':
         get_token(request)
@@ -319,6 +336,82 @@ def resetPassword(request):
     return JsonResponse({'code': 503, 'message': 'No method'})
 
 
+@csrf_exempt
+def reset_user_info(request):
+    if request.method == 'POST':
+        json_body = json.loads(request.body)
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = json_body.get('userId', None)
+        user_email = json_body.get('email', None)
+        nickname = json_body.get('nickname', None)
+        gender = json_body.get('gender', None)
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        userObj = User.objects.get(id=user_id, email=user_email)
+        userObj.nickname = nickname
+        userObj.gender = gender
+        userObj.save()
+
+        return JsonResponse({'code': 200})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+@csrf_exempt
+def reset_portrait(request):
+    if request.method == 'POST':
+        content_type = request.content_type
+        if content_type.startswith('multipart/form-data'):
+            file = request.FILES.get('file')
+            # os.path.join(settings.BASE_DIR, 'commonstatic', 'user')
+            print(os.path.join(os.environ.get('TEMP'), 'user', 'file.png'))
+            with open(os.path.join(os.environ.get('TEMP'), 'user', 'file'), 'wb+') as destination:
+                for chunk in file.chunks():
+                    destination.write(chunk)
+
+        return JsonResponse({'code': 200})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+def get_singer_list(request):
+    if request.method == 'GET':
+        alphabet = int(request.GET.get('alphabet', -1))
+        area = int(request.GET.get('area', -1))
+        gender = int(request.GET.get('gender', -1))
+        genre = int(request.GET.get('genre', -1))
+        offset = int(request.GET.get('offset', 1))
+        limit = int(request.GET.get('limit', 20))
+        alphabet_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
+                         'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+        area_list = ['中国', '欧美', '日韩']
+        gender_list = ['男', '女', '组合']
+        genre_list = ['流行', '说唱', '其他']
+        singer = Singer.object.all()
+        if alphabet != -1:
+            singer = singer.filter(tags__name=alphabet_list[alphabet - 1])
+
+        if area != -1:
+            singer = singer.filter(tags__name=area_list[area - 1])
+
+        if gender != -1:
+            singer = singer.filter(tags__name=gender_list[gender - 1])
+
+        if genre != -1:
+            singer = singer.filter(tags__name=genre_list[genre - 1])
+
+        singer = singer.order_by('id')
+        singer = list(singer.values())[(offset - 1) * limit: offset * limit]
+        return JsonResponse({'code': 200, 'singerList': singer})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
 # @ensure_csrf_cookie
 # def check_jwt(request):
 #     if request.method == 'GET':
@@ -334,24 +427,94 @@ def resetPassword(request):
 #             return JsonResponse({'code': 200})
 #         return JsonResponse({'code': 405, 'message': '登录无效'})
 
+def insert(request):
+    # A = SingerTag(name='A')
+    # A.save()
+    # A = SingerTag(name='B')
+    # A.save()
+    # A = SingerTag(name='C')
+    # A.save()
+    # A = SingerTag(name='D')
+    # A.save()
+    # A = SingerTag(name='E')
+    # A.save()
+    # A = SingerTag(name='F')
+    # A.save()
+    # A = SingerTag(name='G')
+    # A.save()
+    # A = SingerTag(name='H')
+    # A.save()
+    # A = SingerTag(name='I')
+    # A.save()
+    # A = SingerTag(name='J')
+    # A.save()
+    # A = SingerTag(name='K')
+    # A.save()
+    # A = SingerTag(name='L')
+    # A.save()
+    # A = SingerTag(name='M')
+    # A.save()
+    # A = SingerTag(name='N')
+    # A.save()
+    # A = SingerTag(name='O')
+    # A.save()
+    # A = SingerTag(name='P')
+    # A.save()
+    # A = SingerTag(name='Q')
+    # A.save()
+    # A = SingerTag(name='R')
+    # A.save()
+    # A = SingerTag(name='S')
+    # A.save()
+    # A = SingerTag(name='T')
+    # A.save()
+    # A = SingerTag(name='U')
+    # A.save()
+    # A = SingerTag(name='V')
+    # A.save()
+    # A = SingerTag(name='W')
+    # A.save()
+    # A = SingerTag(name='X')
+    # A.save()
+    # A = SingerTag(name='Y')
+    # A.save()
+    # A = SingerTag(name='Z')
+    # A.save()
+    #
+    # neidi = SingerTag(name='中国')
+    # neidi.save()
+    # neidi = SingerTag(name='欧美')
+    # neidi.save()
+    # neidi = SingerTag(name='日韩')
+    # neidi.save()
+    #
+    # nan = SingerTag(name='男')
+    # nan.save()
+    # nan = SingerTag(name='女')
+    # nan.save()
+    # nan = SingerTag(name='组合')
+    # nan.save()
+    #
+    # liuxing = SingerTag(name='流行')
+    # liuxing.save()
+    # liuxing = SingerTag(name='说唱')
+    # liuxing.save()
+    # liuxing = SingerTag(name='其他')
+    # liuxing.save()
 
-# @ensure_csrf_cookie
-# def register(request):
-#     if request.method == 'GET':
-#         get_token(request)
-#         return JsonResponse({'code': 200})
-#     if request.method == 'POST':
-#         json_body = json.loads(request.body)
-#         register_email = json_body.get('registerEmail', None)
-#         gender = int(json_body.get('gender', 1))
-#         register_password = json_body.get('registerPassword', None)
-#         if register_email is None or register_password is None:
-#             return JsonResponse({'code': 400, 'message': 'Params error'})
-#         password = hashlib.sha256(register_password.encode('utf-8')).hexdigest()
-#         if not User.objects.filter(email=register_email).exists():
-#             # user = User(email=register_email, gender=gender, password=password)
-#             # user.save()
-#             token = createJWT(register_email)
-#             return JsonResponse({'code': 200, 'info': {'token': token}})
-#         else:
-#             return JsonResponse({'code': 405, 'message': 'The email has been registered'})
+    # name = '国风集'
+    # desc = 'QQ音乐原创音乐品牌「国风集」，致力于打造全新的国风音乐生态，为优秀的国风原创团队和音乐人提供多方位的扶持，创作精品国风音乐。'
+    # url = '/media/singer'
+    # tag = SingerTag.object.filter(name__in=['G','中国','组合','流行'])
+    #
+    # for i in range(10):
+    #     if i == 0:
+    #         singer = Singer(name=name, desc=desc, url=url)
+    #     else:
+    #         name1 = name + str(i+1)
+    #         singer = Singer(name=name1, desc=desc, url=url)
+    #     singer.save()
+    #     singer.tags.add(*tag)
+
+    print(1)
+    return JsonResponse({'code': 200})

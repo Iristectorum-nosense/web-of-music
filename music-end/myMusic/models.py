@@ -7,7 +7,7 @@ class User(models.Model):
     objects = models.Manager()
     id = models.AutoField(primary_key=True)
     email = models.CharField(max_length=32)
-    portrait = models.FileField(default='', upload_to='static/users', verbose_name='选择用户头像')
+    portrait = models.CharField(default='', max_length=64)
     score = models.IntegerField(default=0)
     nickname = models.CharField(max_length=32)
     gender = models.IntegerField(default=0)
@@ -34,6 +34,40 @@ class Captcha(models.Model):
         db_table = 'captcha'
 
 
+# singerTag table
+class SingerTag(models.Model):
+    object = models.Manager()
+    name = models.CharField(max_length=50)
+
+    class Meta:
+        db_table = 'singerTag'
+
+
+# singer table
+class Singer(models.Model):
+    object = models.Manager()
+    id = models.AutoField(primary_key=True)
+    url = models.CharField(default='', max_length=64)
+    name = models.CharField(default='', max_length=64)
+    desc = models.CharField(max_length=128)
+    tags = models.ManyToManyField(SingerTag)
+
+    class Meta:
+        db_table = 'singer'
+
+
+# mv table
+class MV(models.Model):
+    objects = models.Manager()
+    id = models.AutoField(primary_key=True)
+    url = models.CharField(default='', max_length=64)
+    name = models.CharField(max_length=64)
+    singer = models.ForeignKey('Singer', on_delete=models.CASCADE)
+    play_count = models.IntegerField(default=0)
+    star_count = models.IntegerField(default=0)
+
+    class Meta:
+        db_table = 'mv'
 
 
 

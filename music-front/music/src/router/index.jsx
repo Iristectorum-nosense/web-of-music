@@ -5,7 +5,7 @@ import { Spin } from 'antd';
 
 const App = lazy(() => import('../App'));
 const Home = lazy(() => import('../views/Home/Home'));
-const Artist = lazy(() => import('../views/Artist/Artist'));
+const Singer = lazy(() => import('../views/Singer/Singer'));
 const MV = lazy(() => import('../views/MV/MV'));
 const RankList = lazy(() => import('../views/RankList/RankList'));
 const MySettng = lazy(() => import('../views/MySetting/MySettng'));
@@ -30,8 +30,8 @@ export const routes = [
                 }
             },
             {
-                path: 'artist',
-                element: React.createElement(Artist),
+                path: 'singer',
+                element: React.createElement(Singer),
                 meta: {
                     auth: false
                 },

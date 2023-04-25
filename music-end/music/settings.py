@@ -117,13 +117,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = "/static/"
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 # DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # 通过链接直接访问静态资源
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'commonstatic')]
+# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'commonstatic')]
 
 # 配置邮箱
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -161,6 +163,7 @@ CORS_ALLOW_HEADERS = (
     'user-agent',
     'x-csrftoken',
     'x-requested-with',
+    'boundary'
 )
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8080']

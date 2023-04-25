@@ -97,7 +97,7 @@ export default function Logout() {
 
     const captchaTimer = () => {
         //验证码定时器
-        let time = 10;
+        let time = 60;
         dispatch(changeCapBtn(true))
         dispatch(setCaptchaTime({
             total: time,

@@ -2,12 +2,14 @@ import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import Login from './Login/Login';
 import Logout from './Logout/Logout';
-import SubNav from './SubNav/SubNav';
 import cookie from 'react-cookies';
 import './Header.scss';
 
+
 export default function Header() {
+
     const token = cookie.load('jwtToken')
+
     return (
         <div className='header-wrapper'>
             <div className='topNav-wrapper'>

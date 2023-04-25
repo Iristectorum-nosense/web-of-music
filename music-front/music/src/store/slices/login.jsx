@@ -94,7 +94,9 @@ const loginSlice = createSlice({
         loginInfos: {
             userId: null,
             email: '',
-            portrait: ''
+            portrait: '',
+            nickname: '',
+            gender: null
         },
         captchaTime: {
             total: 0,
@@ -108,8 +110,14 @@ const loginSlice = createSlice({
             state.loginInfos = {
                 userId: null,
                 email: '',
-                portrait: ''
+                portrait: '',
+                nickname: '',
+                gender: null
             }
+        },
+        resetUserInfo(state, action) {
+            state.loginInfos.nickname = action.payload.nickname
+            state.loginInfos.gender = action.payload.gender
         },
         setCaptchaTime(state, action) {
             if (state.captchaTime.timerId) {  //必须写,因为重渲染会导致定时器被覆盖,而未清除
@@ -147,7 +155,7 @@ const loginSlice = createSlice({
     }
 })
 
-export const { clearUserInfo,
+export const { clearUserInfo, resetUserInfo,
     setCaptchaTime, subCaptchaTime, stopCaptchaTime, changeCapBtn } = loginSlice.actions;
 
 export default loginSlice.reducer;
