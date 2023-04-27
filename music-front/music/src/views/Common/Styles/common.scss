@@ -1,4 +1,6 @@
-$active-color: rgba(125, 197, 241, 0.932);
+$activeBackGround-color: rgba(125, 197, 241, 0.932);
+$mainBackGround-color: rgb(250, 250, 250);
+$subBackGround-color: rgba(0, 0, 0, 0.5);
 
 $mainFont-color: #333333;
 $activeFont-color: #fff;
@@ -11,7 +13,7 @@ $subFont-size: 10px;
 
 // modify antd style in root
 #root .ant-btn {
-    background-color: $active-color;
+    background-color: $activeBackGround-color;
     box-shadow: none;
 }
 
@@ -28,8 +30,8 @@ $subFont-size: 10px;
 #root .ant-form {
     .ant-btn:hover {
         background-color: $activeFont-color;
-        color: $active-color;
-        border-color: $active-color;
+        color: $activeBackGround-color;
+        border-color: $activeBackGround-color;
     }
 
     .ant-btn-default {
@@ -44,14 +46,14 @@ $subFont-size: 10px;
     .ant-input-affix-wrapper-focused,
     .ant-input:hover,
     .ant-input:focus {
-        border-color: $active-color;
+        border-color: $activeBackGround-color;
     }
 
     .ant-checkbox-checked .ant-checkbox-inner,
     .ant-checkbox-wrapper:not(.ant-checkbox-wrapper-disabled):hover .ant-checkbox-checked:not(.ant-checkbox-disabled) .ant-checkbox-inner,
     .ant-radio-checked .ant-radio-inner,
     .ant-radio-wrapper:not(.ant-radio-wrapper-disabled):hover .ant-radio-checked:not(.ant-radio-disabled) .ant-radio-inner {
-        background-color: $active-color;
+        background-color: $activeBackGround-color;
     }
 
     .ant-checkbox-checked::after {
@@ -59,7 +61,7 @@ $subFont-size: 10px;
     }
 
     .ant-checkbox-checked-focused:hover {
-        border-color: $active-color;
+        border-color: $activeBackGround-color;
     }
 
 }
@@ -90,12 +92,12 @@ $subFont-size: 10px;
 
         .ant-btn-default:not(:disabled):hover {
             color: #fff;
-            border: $active-color;
+            border: $activeBackGround-color;
         }
     }
 
     .ant-btn:hover {
-        background-color: $active-color;
+        background-color: $activeBackGround-color;
     }
 
 
@@ -122,7 +124,7 @@ $subFont-size: 10px;
         .ant-tabs-tab:hover,
         .ant-tabs-nav .ant-tabs-nav-wrap .ant-tabs-nav-list .ant-tabs-tab-active .ant-tabs-tab-btn,
         .ant-tabs-tab-btn:hover {
-            color: $active-color;
+            color: $activeBackGround-color;
         }
     }
 
@@ -131,8 +133,8 @@ $subFont-size: 10px;
 
         .ant-btn:hover {
             background-color: $activeFont-color;
-            color: $active-color;
-            border-color: $active-color;
+            color: $activeBackGround-color;
+            border-color: $activeBackGround-color;
         }
 
         .ant-checkbox-inner,
@@ -143,14 +145,14 @@ $subFont-size: 10px;
         .ant-input-affix-wrapper-focused,
         .ant-input:hover,
         .ant-input:focus {
-            border-color: $active-color;
+            border-color: $activeBackGround-color;
         }
 
         .ant-checkbox-checked .ant-checkbox-inner,
         .ant-checkbox-wrapper:not(.ant-checkbox-wrapper-disabled):hover .ant-checkbox-checked:not(.ant-checkbox-disabled) .ant-checkbox-inner,
         .ant-radio-checked .ant-radio-inner,
         .ant-radio-wrapper:not(.ant-radio-wrapper-disabled):hover .ant-radio-checked:not(.ant-radio-disabled) .ant-radio-inner {
-            background-color: $active-color;
+            background-color: $activeBackGround-color;
         }
 
         .ant-checkbox-checked::after {
@@ -158,7 +160,7 @@ $subFont-size: 10px;
         }
 
         .ant-checkbox-checked-focused:hover {
-            border-color: $active-color;
+            border-color: $activeBackGround-color;
         }
 
     }

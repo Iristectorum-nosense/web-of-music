@@ -10,5 +10,7 @@ urlpatterns = [
     path('user/resetInfos', views.reset_user_info),
     path('user/resetPortrait', views.reset_portrait),
     path('singerList', views.get_singer_list),
+    path('mvList', views.get_mv_list),
+
     path('user/insert', views.insert),
 ]

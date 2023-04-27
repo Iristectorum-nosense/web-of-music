@@ -1,0 +1,120 @@
+@import '../Common/Styles/common.scss';
+
+.mv-tag {
+    margin: 5%;
+    background-color: $mainBackGround-color;
+}
+
+.mv-tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.mv-tag-item {
+    margin: 1%;
+    padding: 0.5% 1%;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.mv-tag-item:hover {
+    color: $activeBackGround-color;
+}
+
+.mv-tag-item-selected {
+    background-color: $activeBackGround-color;
+    color: $activeFont-color;
+}
+
+.mv-tag-item-selected:hover {
+    color: $activeFont-color;
+}
+
+.mv-content {
+    margin: 5%;
+    display: grid;
+    grid-template-columns: repeat(4, 280px);
+    justify-content: space-between;
+    grid-gap: 40px 20px;
+}
+
+.mv-content-item {
+    width: 100%;
+    height: 250px;
+}
+
+.mv-content-item>a {
+    display: block;
+}
+
+.mv-content-item a:hover {
+    color: $activeBackGround-color;
+}
+
+.mv-content-item-img {
+    position: relative;
+    width: 280px;
+    height: calc(9 * 280px / 16);
+    cursor: pointer;
+    overflow: hidden;
+
+    img {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        transition: transform .75s ease-in-out;
+    }
+
+    .mask {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: $subBackGround-color;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+
+        span {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(4);
+            color: $subFont-color;
+        }
+    }
+
+    &:hover img {
+        transform: scale(1.2);
+    }
+
+    .mask:hover {
+        opacity: 1;
+    }
+}
+
+.mv-content-item-font {
+    margin: 5px 0 0 10px;
+    width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: $mainFont-color;
+}
+
+.mv-content-item-font>a,
+.mv-content-item-font>span {
+    margin-right: 20px;
+    color: $subFont-color;
+}
+
+
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 3%;
+}

@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
-function useTag(intialOption = {}, tagDefs = []) {
+function useTag(initialOption = {}, tagDefs = []) {
     const navigate = useNavigate();
     const location = useLocation();
 
     const [tags, setTags] = useState(
         tagDefs.map((tagDef) => ({
             param: tagDef.param,
-            option: { name: intialOption[tagDef.param].name, value: intialOption[tagDef.param].value },
+            option: { name: initialOption[tagDef.param].name, value: initialOption[tagDef.param].value },
         }))
     );
 
@@ -21,8 +21,8 @@ function useTag(intialOption = {}, tagDefs = []) {
                 option: {
                     name: searchParams.get(tagDefs.find((tagDef) => tagDef.param === tag.param).param)
                         ? (tagDefs.find((tagDef) => tagDef.param === tag.param).options).find((option) => option.value === parseInt(searchParams.get(tagDefs.find((tagDef) => tagDef.param === tag.param).param))).name
-                        : intialOption[tagDefs.find((tagDef) => tagDef.param === tag.param).param].name,
-                    value: searchParams.get(tagDefs.find((tagDef) => tagDef.param === tag.param).param) || intialOption[tagDefs.find((tagDef) => tagDef.param === tag.param).param].value
+                        : initialOption[tagDefs.find((tagDef) => tagDef.param === tag.param).param].name,
+                    value: searchParams.get(tagDefs.find((tagDef) => tagDef.param === tag.param).param) || initialOption[tagDefs.find((tagDef) => tagDef.param === tag.param).param].value
                 }
             }))
         );
@@ -45,8 +45,8 @@ function useTag(intialOption = {}, tagDefs = []) {
     return { tags, handleTagClick };
 }
 
-export default function TagComponent({ intialOption = {}, tagDefs = [], styleDefs = {} }) {
-    const { tags, handleTagClick } = useTag(intialOption, tagDefs)
+export default function TagComponent({ initialOption = {}, tagDefs = [], styleDefs = {} }) {
+    const { tags, handleTagClick } = useTag(initialOption, tagDefs)
 
     return (
         <div className={styleDefs.tag}>

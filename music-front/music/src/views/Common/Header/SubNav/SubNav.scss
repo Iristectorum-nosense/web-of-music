@@ -16,14 +16,14 @@ $sub-font-size: 16px;
 
         &:hover {
             border-radius: 20px;
-            background-color: $active-color;
+            background-color: $activeBackGround-color;
             color: $activeFont-color;
         }
     }
 
     .active {
         border-radius: 20px;
-        background-color: $active-color;
+        background-color: $activeBackGround-color;
         color: $activeFont-color;
     }
 }

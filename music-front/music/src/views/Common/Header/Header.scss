@@ -19,13 +19,13 @@ $top-font-size: 25px;
         color: $mainFont-color;
 
         &:hover {
-            background-color: $active-color;
+            background-color: $activeBackGround-color;
             color: $activeFont-color;
         }
     }
 
     .active {
-        background-color: $active-color;
+        background-color: $activeBackGround-color;
         color: $activeFont-color;
     }
 

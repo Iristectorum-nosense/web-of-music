@@ -40,7 +40,7 @@ export default function Singer() {
         }
     ]
 
-    const intialOption = {
+    const initialOption = {
         alphabet: { name: '全部', value: -1 },
         area: { name: '全部', value: -1 },
         gender: { name: '全部', value: -1 },
@@ -54,7 +54,7 @@ export default function Singer() {
         itemSelected: 'singer-tag-item singer-tag-item-selected'
     }
 
-    const SingerTag = <TagComponent intialOption={intialOption} tagDefs={tagDefs} styleDefs={styleDefs} />
+    const SingerTag = <TagComponent initialOption={initialOption} tagDefs={tagDefs} styleDefs={styleDefs} />
 
     const location = useLocation()
 
@@ -67,10 +67,10 @@ export default function Singer() {
 
     useEffect(() => {
         let payload = {
-            alphabet: parseInt(searchParams.get('alphabet')) || intialOption.alphabet.value,
-            area: parseInt(searchParams.get('area')) || intialOption.area.value,
-            gender: parseInt(searchParams.get('gender')) || intialOption.gender.value,
-            genre: parseInt(searchParams.get('genre')) || intialOption.genre.value,
+            alphabet: parseInt(searchParams.get('alphabet')) || initialOption.alphabet.value,
+            area: parseInt(searchParams.get('area')) || initialOption.area.value,
+            gender: parseInt(searchParams.get('gender')) || initialOption.gender.value,
+            genre: parseInt(searchParams.get('genre')) || initialOption.genre.value,
             offset: offset,
             limit: limit
         }
@@ -87,10 +87,10 @@ export default function Singer() {
 
     const getDelayData = () => {
         let payload = {
-            alphabet: parseInt(searchParams.get('alphabet')) || intialOption.alphabet.value,
-            area: parseInt(searchParams.get('area')) || intialOption.area.value,
-            gender: parseInt(searchParams.get('gender')) || intialOption.gender.value,
-            genre: parseInt(searchParams.get('genre')) || intialOption.genre.value,
+            alphabet: parseInt(searchParams.get('alphabet')) || initialOption.alphabet.value,
+            area: parseInt(searchParams.get('area')) || initialOption.area.value,
+            gender: parseInt(searchParams.get('gender')) || initialOption.gender.value,
+            genre: parseInt(searchParams.get('genre')) || initialOption.genre.value,
             offset: offsetRef.current,
             limit: limit
         }
@@ -110,7 +110,7 @@ export default function Singer() {
         if (bottomRef.current && bottomRef.current.getBoundingClientRect().bottom < window.innerHeight && offsetRef.current !== 0) {
             getDelayData()
         }
-    }, 5000)
+    }, 3000)
 
     const handleScroll = useCallback(throttle, [location])
 

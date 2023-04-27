@@ -2,6 +2,7 @@
 
 .singer-tag {
     margin: 5%;
+    background-color: $mainBackGround-color;
 }
 
 .singer-tag-list {
@@ -18,11 +19,11 @@
 }
 
 .singer-tag-item:hover {
-    color: $active-color;
+    color: $activeBackGround-color;
 }
 
 .singer-tag-item-selected {
-    background-color: $active-color;
+    background-color: $activeBackGround-color;
     color: $activeFont-color;
 }
 
@@ -64,7 +65,7 @@
 }
 
 .singer-content-item-font:hover {
-    color: $active-color;
+    color: $activeBackGround-color;
 }
 
 .loading {

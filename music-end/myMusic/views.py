@@ -5,6 +5,7 @@ import time
 import jwt
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
+from django.utils import timezone
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from .models import *
 from django.core.mail import send_mail
@@ -392,24 +393,69 @@ def get_singer_list(request):
         area_list = ['中国', '欧美', '日韩']
         gender_list = ['男', '女', '组合']
         genre_list = ['流行', '说唱', '其他']
-        singer = Singer.object.all()
+
+        singerObj = Singer.objects.all()
         if alphabet != -1:
-            singer = singer.filter(tags__name=alphabet_list[alphabet - 1])
+            singerObj = singerObj.filter(tags__name=alphabet_list[alphabet - 1])
 
         if area != -1:
-            singer = singer.filter(tags__name=area_list[area - 1])
+            singerObj = singerObj.filter(tags__name=area_list[area - 1])
 
         if gender != -1:
-            singer = singer.filter(tags__name=gender_list[gender - 1])
+            singerObj = singerObj.filter(tags__name=gender_list[gender - 1])
 
         if genre != -1:
-            singer = singer.filter(tags__name=genre_list[genre - 1])
+            singerObj = singerObj.filter(tags__name=genre_list[genre - 1])
 
-        singer = singer.order_by('id')
-        singer = list(singer.values())[(offset - 1) * limit: offset * limit]
-        return JsonResponse({'code': 200, 'singerList': singer})
+        singerObj = singerObj.order_by('id')
+        singerObj = list(singerObj.values('id', 'name', 'url'))[(offset - 1) * limit: offset * limit]
+        return JsonResponse({'code': 200, 'singerList': singerObj})
 
     return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+def get_mv_list(request):
+    if request.method == 'GET':
+        version = int(request.GET.get('version', -1))
+        order = int(request.GET.get('order', 1))
+        offset = int(request.GET.get('offset', 1))
+        limit = int(request.GET.get('limit', 8))
+        version_list = ['MV', '现场']
+
+        mvObj = MV.objects.all()
+        if version != -1:
+            mvObj = mvObj.filter(tags__name=version_list[version - 1])
+
+        if order != 1:
+            mvObj = mvObj.order_by('play_count', 'star_count', 'id')
+        else:
+            mvObj = mvObj.order_by('-publish', 'id')
+
+        mvObj = mvObj[(offset - 1) * limit: offset * limit]
+        mvList = []
+        for mv in mvObj:
+            singerObj = mv.singer_set.all()
+            singerList = []
+            for singer in singerObj:
+                singer_dict = {
+                    'id': singer.id,
+                    'name': singer.name
+                }
+                singerList.append(singer_dict)
+            mv_dict = {
+                'id': mv.id,
+                'name': mv.name,
+                'url': mv.url,
+                'play_count': mv.play_count,
+                'publish': mv.publish,
+                'singers': singerList
+            }
+            mvList.append(mv_dict)
+
+        return JsonResponse({'code': 200, 'mvList': mvList})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
 
 
 # @ensure_csrf_cookie
@@ -428,6 +474,7 @@ def get_singer_list(request):
 #         return JsonResponse({'code': 405, 'message': '登录无效'})
 
 def insert(request):
+    # -----------------------singer-tag
     # A = SingerTag(name='A')
     # A.save()
     # A = SingerTag(name='B')
@@ -515,6 +562,59 @@ def insert(request):
     #         singer = Singer(name=name1, desc=desc, url=url)
     #     singer.save()
     #     singer.tags.add(*tag)
+
+    # -----------------------mv-tag
+    # a = MVTag(name='MV')
+    # a.save()
+    # a = MVTag(name='现场')
+    # a.save()
+
+    # name1 = 'Heart Of Peace'
+    # desc1 = '《Heart Of Peace》是ZHANGYE和周深第一次合作，这是一支英文电音歌曲，由张也作曲、作词并担任制作人，周深演唱。歌曲表达了对和平生活的热爱，探讨在面对困难与挑战时，该如何保持一颗纯粹的心，以及在经历过迷茫后，继续在生活中寻找自我成长的希望感。'
+    # publish1 = datetime.datetime(2023, 4, 25, 17, 0)
+    #
+    # name2 = '如愿'
+    # desc2 = '电影《我和我的父辈》发布主题推广曲《如愿》，歌曲由王菲演唱，钱雷作曲，唐恬作词。父母一辈为之奋斗的一幕幕，在子女一辈的时代得以实现，这便是歌名“如愿”的含义。 自《我和我的祖国》之后，王菲再度献唱“国庆三部曲”系列。伴随着王菲空灵又深情的歌声，《如愿》歌词以极具诗意的比喻，娓娓道来了四个不同年代的家庭故事，呈现了在世代中国人的奋斗与传承中，祖国日益强大之景。作曲者钱雷透露，王菲在录制过程中打磨每一句唱词，为了非常细节的情绪反复录制，为歌曲注入情感。作词者唐恬则表示，曲的指引、王菲的语气和故事本身的力量，汇成了她的创作。 2019看“祖国”，2020看“家乡”，2021看“父辈”。作为陪伴观众第三年的国庆最强IP，电影《我和我的父辈》接棒“国庆三部曲”，继续以大时代下的小人物切入，以家庭关系为载体，讲述父母与子女深切的情感羁绊。电影由吴京、章子怡、徐峥、沈腾执导，将于今年9月30日上映，是全家人的国庆必看首选。'
+    # publish2 = datetime.datetime(2023, 1, 22, 17, 0)
+    #
+    # name3 = 'Flying High'
+    # desc3 = '新华社于2023年中国航天日推出原创英文歌曲《Flying High》，由青年歌手希林娜依·高和新华社记者路滨琪联袂演唱，聚焦中国航天人的精神世界，用动感的旋律和动人的歌声诉说中国航天人在浩瀚宇宙中上下求索，不断追梦的伟大实践。用音乐这一跨越国界和语种的艺术形式，面向全世界唱响新时代中国航天故事。'
+    # publish3 = datetime.datetime(2023, 3, 24, 17, 0)
+    #
+    # url = '/media/mv'
+    # play_count = 0
+    # star_count = 0
+    #
+    # tag1 = MVTag.objects.filter(name__in=['MV'])
+    # tag2 = MVTag.objects.filter(name__in=['现场'])
+    #
+    # for i in range(16):
+    #     if i == 0:
+    #         mv1 = MV(name=name1, desc=desc1, publish=timezone.make_aware(publish1), url=url, play_count=play_count, star_count=star_count)
+    #         mv2 = MV(name=name2, desc=desc2, publish=timezone.make_aware(publish2), url=url, play_count=play_count, star_count=star_count)
+    #         mv3 = MV(name=name3, desc=desc3, publish=timezone.make_aware(publish3), url=url, play_count=play_count, star_count=star_count)
+    #     else:
+    #         name11 = name1 + str(i+1)
+    #         name21 = name2 + str(i+1)
+    #         name31 = name3 + str(i+1)
+    #         mv1 = MV(name=name11, desc=desc1, publish=timezone.make_aware(publish1 + datetime.timedelta(days=i, hours=i)), url=url, play_count=play_count, star_count=star_count)
+    #         mv2 = MV(name=name21, desc=desc2, publish=timezone.make_aware(publish2 + datetime.timedelta(days=i, hours=i)), url=url, play_count=play_count, star_count=star_count)
+    #         mv3 = MV(name=name31, desc=desc3, publish=timezone.make_aware(publish3 + datetime.timedelta(days=i, hours=i)), url=url, play_count=play_count, star_count=star_count)
+    #     mv1.save()
+    #     mv1.tags.add(*tag1)
+    #     mv2.save()
+    #     mv2.tags.add(*tag2)
+    #     mv3.save()
+    #     mv3.tags.add(*tag1)
+
+    # -----------------------singer-mv
+    # mv = MV.objects.all()[36:48]
+    # singer = Singer.objects.get(id=51)
+    # singer.mvs.add(*mv)
+    # mv = MV.objects.all()[:6]
+    # singer = Singer.objects.get(id=31)
+    # singer.mvs.add(*mv)
+
 
     print(1)
     return JsonResponse({'code': 200})

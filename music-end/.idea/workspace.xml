@@ -19,6 +19,7 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/music/settings.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/music/urls.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/myMusic/models.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/myMusic/tests.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/myMusic/urls.py" root0="FORCE_HIGHLIGHTING" />
