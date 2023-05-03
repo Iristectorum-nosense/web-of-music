@@ -1,0 +1,86 @@
+@import '../Common/Styles/common.scss';
+
+$tag-font-size: 20px;
+
+.rankList {
+    margin: 5% 5% 5% 0;
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+}
+
+.rankList-tag {
+    padding: 10% 0;
+    width: 200px;
+    background-color: $mainBackGround-color;
+}
+
+.rankList-tag-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    position: relative;
+}
+
+.rankList-tag-item {
+    padding: 10%;
+    cursor: pointer;
+    color: $mainFont-color;
+
+    &:hover {
+        color: $activeBackGround-color;
+    }
+
+    &:first-child {
+        margin-top: 60px;
+
+        &::before {
+            content: '巅峰榜';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            width: 80%;
+            height: 50px;
+            border-bottom: 1px solid $subFont-color;
+            color: $mainFont-color;
+            font-size: $tag-font-size;
+            pointer-events: none;
+        }
+    }
+
+    &:nth-child(3) {
+        margin-top: calc(19px * 2 + 60px);
+
+        &::before {
+            content: '地区榜';
+            position: absolute;
+            top: calc(80px * 2 + 50px);
+            left: 10%;
+            width: 80%;
+            height: 50px;
+            border-bottom: 1px solid $subFont-color;
+            color: $mainFont-color;
+            font-size: $tag-font-size;
+            pointer-events: none;
+        }
+    }
+}
+
+.rankList-tag-item-selected {
+    background-color: $activeBackGround-color;
+    color: $activeFont-color;
+
+    &:hover {
+        color: $activeFont-color;
+    }
+}
+
+.rankList-content {
+    margin-left: 5%;
+}
+
+.rankList-content-button {
+    margin: 2%;
+}
+
+.rankList-content-list {
+    background-color: bisque;
+}

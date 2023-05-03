@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.db import models
 
 
@@ -59,14 +60,28 @@ class MV(models.Model):
         db_table = 'mv'
 
 
+# song table
+class Song(models.Model):
+    objects = models.Manager()
+    id = models.AutoField(primary_key=True)
+    url = models.CharField(default='', max_length=64)
+    name = models.CharField(max_length=64)
+    publish = models.DateTimeField()
+    time = models.DurationField(default=timedelta(seconds=0))
+    play_count = models.IntegerField(default=0)
+    star_count = models.IntegerField(default=0)
+    mv = models.ForeignKey('MV', on_delete=models.SET_NULL, null=True, blank=True)
+
+    class Meta:
+        db_table = 'song'
+
+
 # # album table
 # class Album(models.Model):
 #     object = models.Manager()
 #     id = models.AutoField(primary_key=True)
 #     url = models.CharField(default='', max_length=64)
 #     name = models.CharField(default='', max_length=64)
-
-
 
 # singerTag table
 class SingerTag(models.Model):
@@ -86,6 +101,7 @@ class Singer(models.Model):
     desc = models.CharField(max_length=128)
     tags = models.ManyToManyField(SingerTag)
     mvs = models.ManyToManyField(MV)
+    songs = models.ManyToManyField(Song)
     # albums = models.ManyToManyField(Album)
 
     class Meta:

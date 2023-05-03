@@ -1,0 +1,60 @@
+@import '../../Common/Styles/common.scss';
+
+.page-list {
+    margin: 5%;
+    display: flex;
+    justify-content: center;
+
+    .page-item {
+        padding: 1%;
+        color: $mainFont-color;
+        font-size: $mainFont-size;
+        margin: 0 1%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 20px;
+        width: 20px;
+        border: 1px solid transparent;
+        border-radius: 5px;
+        cursor: pointer;
+
+        &:hover {
+            color: $activeBackGround-color;
+            border-color: $activeBackGround-color;
+        }
+    }
+
+    .page-item-selected {
+        color: $activeBackGround-color;
+        border-color: $activeBackGround-color;
+    }
+
+    .page-item-disabled {
+        pointer-events: none;
+    }
+
+    .page-font {
+        padding: 1%;
+        color: $mainFont-color;
+        font-size: $mainFont-size;
+    }
+
+    .page-input {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        input {
+            width: 50px;
+            height: 35px;
+            box-shadow: none;
+
+            &:hover,
+            &:focus {
+                border-color: $activeBackGround-color;
+            }
+
+        }
+    }
+}

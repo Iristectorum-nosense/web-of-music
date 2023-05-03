@@ -16,19 +16,20 @@
     padding: 0.5% 1%;
     border: 1px solid transparent;
     cursor: pointer;
-}
+    color: $mainFont-color;
 
-.singer-tag-item:hover {
-    color: $activeBackGround-color;
+    &:hover {
+        color: $activeBackGround-color;
+    }
 }
 
 .singer-tag-item-selected {
     background-color: $activeBackGround-color;
     color: $activeFont-color;
-}
 
-.singer-tag-item-selected:hover {
-    color: $activeFont-color;
+    &:hover {
+        color: $activeFont-color;
+    }
 }
 
 .singer-content {
@@ -62,10 +63,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
     color: $mainFont-color;
-}
 
-.singer-content-item-font:hover {
-    color: $activeBackGround-color;
+    &:hover {
+        color: $activeBackGround-color;
+    }
 }
 
 .loading {

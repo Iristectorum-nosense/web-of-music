@@ -457,6 +457,85 @@ def get_mv_list(request):
     return JsonResponse({'code': 503, 'message': 'No method'})
 
 
+def get_rank_list(request):
+    if request.method == 'GET':
+        top = int(request.GET.get('top', 1))
+        area_list = ['中国', '欧美', '日韩']
+
+        songObj = Song.objects.all()
+        if top == 1:
+            songObj = songObj.order_by('play_count', 'star_count', 'id')
+            songObj = songObj[:20]
+            songList = []
+            for song in songObj:
+                singerObj = song.singer_set.all()
+                singerList = []
+                for singer in singerObj:
+                    singer_dict = {
+                        'id': singer.id,
+                        'name': singer.name
+                    }
+                    singerList.append(singer_dict)
+                song_dict = {
+                    'id': song.id,
+                    'name': song.name,
+                    'url': song.url,
+                    'time': song.time,
+                    'singers': singerList
+                }
+                songList.append(song_dict)
+            return JsonResponse({'code': 200, 'rankList': songList})
+
+        if top == 2:
+            songObj = songObj.order_by('-publish', 'id')
+            songObj = songObj[:20]
+            songList = []
+            for song in songObj:
+                singerObj = song.singer_set.all()
+                singerList = []
+                for singer in singerObj:
+                    singer_dict = {
+                        'id': singer.id,
+                        'name': singer.name
+                    }
+                    singerList.append(singer_dict)
+                song_dict = {
+                    'id': song.id,
+                    'name': song.name,
+                    'url': song.url,
+                    'time': song.time,
+                    'singers': singerList
+                }
+                songList.append(song_dict)
+            return JsonResponse({'code': 200, 'rankList': songList})
+
+        if top in (3, 4, 5):
+            songObj = songObj.order_by('play_count', 'star_count', 'id')
+            songList = []
+            for song in songObj:
+                if len(songList) == 20:
+                    break
+                singerObj = song.singer_set.all()
+                querySinger = singerObj.filter(tag__name=area_list[top-3])
+                if querySinger.exist():
+                    singerList = []
+                    for singer in singerObj:
+                        singer_dict = {
+                            'id': singer.id,
+                            'name': singer.name
+                        }
+                        singerList.append(singer_dict)
+                    song_dict = {
+                        'id': song.id,
+                        'name': song.name,
+                        'url': song.url,
+                        'time': song.time,
+                        'singers': singerList
+                    }
+                    songList.append(song_dict)
+            return JsonResponse({'code': 200, 'rankList': songList})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
 
 # @ensure_csrf_cookie
 # def check_jwt(request):
@@ -615,6 +694,189 @@ def insert(request):
     # singer = Singer.objects.get(id=31)
     # singer.mvs.add(*mv)
 
+    # -----------------------song
+    # nameList = ['清河诀', '破阵 (《少年歌行 风花雪月篇》片尾主题曲)', '情人咒 (电视剧《琉璃美人煞》片尾曲)', '那个男人 (声入人心)', '鹿 Be Free (声入人心)',
+    #         '风之旅人 (《将夜2》影视剧主题曲)', '我属于我自己 (声入人心)', 'OveR', 'Alone', '如果再见面']
+    #
+    # url = '/media/song'
+    # play_count = 0
+    # star_count = 0
 
-    print(1)
+    # for i in range(1, 16):
+    #     if i <= 10:
+    #         name = nameList[i%10-1]
+    #         song = Song(name=name, url=url, publish=timezone.make_aware(datetime.datetime(2023, 1, 5, 12, 0)), play_count=play_count, star_count=star_count)
+    #         song.save()
+    #     elif i <= 20:
+    #         name = nameList[i%10-1] + str(2)
+    #         song = Song(name=name, url=url, publish=timezone.make_aware(datetime.datetime(2023, 1, 5, 12, 0)), play_count=play_count, star_count=star_count)
+    #         song.save()
+
+    # for i in range(16, 31):
+    #     if i <= 20:
+    #         name = nameList[i%10-1] + str(2)
+    #         song = Song(name=name, url=url, publish=timezone.make_aware(datetime.datetime(2023, 1, 25, 12, 0)), play_count=play_count, star_count=star_count)
+    #         song.save()
+    #     elif i <= 30:
+    #         name = nameList[i%10-1] + str(3)
+    #         song = Song(name=name, url=url, publish=timezone.make_aware(datetime.datetime(2023, 1, 25, 12, 0)), play_count=play_count, star_count=star_count)
+    #         song.save()
+
+    # for i in range(31, 46):
+    #     if i <= 40:
+    #         name = nameList[i%10-1] + str(4)
+    #         song = Song(name=name, url=url, publish=timezone.make_aware(datetime.datetime(2023, 2, 17, 12, 0)), play_count=play_count, star_count=star_count)
+    #         song.save()
+    #     elif i <= 50:
+    #         name = nameList[i%10-1] + str(5)
+    #         song = Song(name=name, url=url, publish=timezone.make_aware(datetime.datetime(2023, 2, 17, 12, 0)), play_count=play_count, star_count=star_count)
+    #         song.save()
+
+    # for i in range(46, 61):
+    #     if i <= 50:
+    #         name = nameList[i%10-1] + str(5)
+    #         song = Song(name=name, url=url, publish=timezone.make_aware(datetime.datetime(2023, 3, 1, 12, 0)), play_count=play_count, star_count=star_count)
+    #         song.save()
+    #     elif i <= 60:
+    #         name = nameList[i%10-1] + str(6)
+    #         song = Song(name=name, url=url, publish=timezone.make_aware(datetime.datetime(2023, 3, 1, 12, 0)), play_count=play_count, star_count=star_count)
+    #         song.save()
+
+    # for i in range(61, 76):
+    #     if i <= 70:
+    #         name = nameList[i%10-1] + str(7)
+    #         song = Song(name=name, url=url, publish=timezone.make_aware(datetime.datetime(2023, 4, 7, 12, 0)), play_count=play_count, star_count=star_count)
+    #         song.save()
+    #     elif i <= 80:
+    #         name = nameList[i%10-1] + str(8)
+    #         song = Song(name=name, url=url, publish=timezone.make_aware(datetime.datetime(2023, 4, 7, 12, 0)), play_count=play_count, star_count=star_count)
+    #         song.save()
+
+    # for i in range(76, 101):
+    #     if i <= 80:
+    #         name = nameList[i%10-1] + str(8)
+    #         song = Song(name=name, url=url, publish=timezone.make_aware(datetime.datetime(2023, 4, 7, 12, 0)), play_count=play_count, star_count=star_count)
+    #         song.save()
+    #     elif i <= 90:
+    #         name = nameList[i%10-1] + str(9)
+    #         song = Song(name=name, url=url, publish=timezone.make_aware(datetime.datetime(2023, 4, 7, 12, 0)), play_count=play_count, star_count=star_count)
+    #         song.save()
+    #     elif i <= 100:
+    #         name = nameList[i%10-1] + str(10)
+    #         song = Song(name=name, url=url, publish=timezone.make_aware(datetime.datetime(2023, 4, 7, 12, 0)), play_count=play_count, star_count=star_count)
+    #         song.save()
+
+    # for i in range(76, 101):
+    #     song = Song.objects.get(id=i)
+    #     song.publish = timezone.make_aware(datetime.datetime(2023, 4, 14, 12, 0) + datetime.timedelta(days=(i-76)))
+    #     song.save()
+
+    # for i in range(1, 100):
+    #     song = Song.objects.get(id=i)
+    #     if i % 10 == 1:
+    #         song.time = timedelta(minutes=3, seconds=44)
+    #     elif i % 10 == 2:
+    #         song.time = timedelta(minutes=3, seconds=24)
+    #     elif i % 10 == 3:
+    #         song.time = timedelta(minutes=6, seconds=2)
+    #     elif i % 10 == 4:
+    #         song.time = timedelta(minutes=4, seconds=37)
+    #     elif i % 10 == 5:
+    #         song.time = timedelta(minutes=3, seconds=52)
+    #     elif i % 10 == 6:
+    #         song.time = timedelta(minutes=4, seconds=6)
+    #     elif i % 10 == 7:
+    #         song.time = timedelta(minutes=4, seconds=1)
+    #     elif i % 10 == 8:
+    #         song.time = timedelta(minutes=4, seconds=6)
+    #     elif i % 10 == 9:
+    #         song.time = timedelta(minutes=3, seconds=24)
+    #     elif i % 10 == 0:
+    #         song.time = timedelta(minutes=4, seconds=2)
+    #     song.save()
+
+    # -----------------------song-mv
+    # for i in range(1, 16):
+    #     song = Song.objects.get(id=i)
+    #     mv = MV.objects.get(id=i)
+    #     song.mv = mv
+    #     song.save()
+
+    # for i in range(18,23):
+    #     song = Song.objects.get(id=i)
+    #     mv = MV.objects.get(id=(i-2))
+    #     song.mv = mv
+    #     song.save()
+
+    # for i in range(32,37):
+    #     song = Song.objects.get(id=i)
+    #     mv = MV.objects.get(id=(i-11))
+    #     song.mv = mv
+    #     song.save()
+    #
+    # for i in range(46,51):
+    #     song = Song.objects.get(id=i)
+    #     mv = MV.objects.get(id=(i-20))
+    #     song.mv = mv
+    #     song.save()
+    #
+    # for i in range(69,74):
+    #     song = Song.objects.get(id=i)
+    #     mv = MV.objects.get(id=(i-38))
+    #     song.mv = mv
+    #     song.save()
+    #
+    # for i in range(76, 89):
+    #     song = Song.objects.get(id=i)
+    #     mv = MV.objects.get(id=(i-40))
+    #     song.mv = mv
+    #     song.save()
+
+    # for i in range(92, 95):
+    #     song = Song.objects.get(id=i)
+    #     mv = MV.objects.get(id=(i-60))
+    #     song.mv = mv
+    #     song.save()
+
+    # -----------------------song-singer
+    # for i in range(1, 76):
+    #     song = Song.objects.get(id=i)
+    #     if i <= 30:
+    #         singer = Singer.objects.get(id=1)
+    #         singer.songs.add(song)
+    #     elif i <= 45:
+    #         singer = Singer.objects.get(id=11)
+    #         singer.songs.add(song)
+    #     elif i <= 60:
+    #         singer = Singer.objects.get(id=21)
+    #         singer.songs.add(song)
+    #     elif i <= 75:
+    #         singer = Singer.objects.get(id=31)
+    #         singer.songs.add(song)
+
+    # for i in range(76, 101):
+    #     song = Song.objects.get(id=i)
+    #     if i <= 85:
+    #         singer = Singer.objects.get(id=1)
+    #         singer.songs.add(song)
+    #     elif i <= 87:
+    #         singer = Singer.objects.get(id=11)
+    #         singer.songs.add(song)
+    #     elif i <= 89:
+    #         singer = Singer.objects.get(id=21)
+    #         singer.songs.add(song)
+    #     elif i <= 91:
+    #         singer = Singer.objects.get(id=31)
+    #         singer.songs.add(song)
+    #     elif i <= 94:
+    #         singer = Singer.objects.get(id=41)
+    #         singer.songs.add(song)
+    #     elif i <= 97:
+    #         singer = Singer.objects.get(id=51)
+    #         singer.songs.add(song)
+    #     elif i <= 100:
+    #         singer = Singer.objects.get(id=41)
+    #         singer.songs.add(song)
+
+    print('done')
     return JsonResponse({'code': 200})

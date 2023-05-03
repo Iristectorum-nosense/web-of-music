@@ -103,18 +103,6 @@ export default function MV() {
         <div className='header-wrapper'>
             <SubNav></SubNav>
             {SingerTag}
-            {/* <div className='singer-content'>
-                {
-                    singerList.map((singer) => (
-                        <div key={singer.id + singer.name} className='singer-content-item'>
-                            <img className='singer-content-item-img' src={`http://localhost:8000${singer.url}/${singer.id}.png`}
-                                alt={singer.name} loading='lazy' />
-                            <a href='#' className='singer-content-item-font' onClick={(e) => { e.preventDefault() }}>{singer.name}</a>
-                        </div>
-                    ))
-
-                }
-            </div> */}
             <div className='mv-content'>
                 {
                     mvList.map((mv) => (

@@ -12,19 +12,21 @@ $mainFont-size: 16px;
 $subFont-size: 10px;
 
 // modify antd style in root
-#root .ant-btn {
-    background-color: $activeBackGround-color;
-    box-shadow: none;
-}
+#root .topNav-login {
+    .ant-btn {
+        background-color: $activeBackGround-color;
+        box-shadow: none;
+    }
 
-#root .ant-avatar {
-    width: 60px;
-    height: 60px;
-    cursor: pointer;
-}
+    .ant-avatar {
+        width: 60px;
+        height: 60px;
+        cursor: pointer;
+    }
 
-#root .ant-avatar>img {
-    width: 100%;
+    .ant-avatar>img {
+        width: 100%;
+    }
 }
 
 #root .ant-form {
@@ -71,13 +73,29 @@ $subFont-size: 10px;
     height: 500px;
 }
 
+#root .rankList-content-button {
+
+    .ant-btn {
+        margin-right: 2%;
+        height: 40px;
+        background-color: $activeFont-color;
+        color: $mainFont-color;
+        box-shadow: none;
+    }
+
+    .ant-btn:hover {
+        background-color: $activeFont-color;
+        color: $activeBackGround-color;
+        border-color: $activeBackGround-color;
+    }
+}
+
 // modify antd style in modal
 .ant-modal-root {
 
     .ant-btn {
         background-color: $activeFont-color;
         color: $mainFont-color;
-
         box-shadow: none;
     }
 
@@ -99,10 +117,6 @@ $subFont-size: 10px;
     .ant-btn:hover {
         background-color: $activeBackGround-color;
     }
-
-
-
-
 
     .ant-tabs {
 

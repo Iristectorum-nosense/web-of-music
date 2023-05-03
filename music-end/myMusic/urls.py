@@ -11,6 +11,7 @@ urlpatterns = [
     path('user/resetPortrait', views.reset_portrait),
     path('singerList', views.get_singer_list),
     path('mvList', views.get_mv_list),
+    path('rankList', views.get_rank_list),
 
     path('user/insert', views.insert),
 ]
