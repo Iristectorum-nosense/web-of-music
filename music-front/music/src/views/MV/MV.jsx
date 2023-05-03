@@ -4,7 +4,8 @@ import SubNav from '../Common/Header/SubNav/SubNav';
 import './MV.scss';
 import { useLocation } from 'react-router-dom';
 import { getMVList } from '../../api/mv';
-import { throttleNow } from '../../utils';
+import { throttleNow } from '../../utils/throttle';
+import { formatPublish } from '../../utils/format';
 import { VideoCameraOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { Space } from 'antd';
 
@@ -123,7 +124,7 @@ export default function MV() {
                             </div>
                             <div className='mv-content-item-font' >
                                 <span><Space><VideoCameraOutlined />{mv.play_count}</Space></span>
-                                <span>{new Date(mv.publish).toISOString().slice(0, 10)}</span>
+                                <span>{formatPublish(mv.publish)}</span>
                             </div>
                         </div>
                     ))

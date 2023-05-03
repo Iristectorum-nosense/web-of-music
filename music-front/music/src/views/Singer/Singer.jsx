@@ -4,7 +4,7 @@ import './Singer.scss';
 import TagComponent from '../Common/Hooks/useTag';
 import { useLocation } from 'react-router-dom';
 import { getSingerList } from '../../api/singer';
-import { throttleNow } from '../../utils';
+import { throttleNow } from '../../utils/throttle';
 
 export default function Singer() {
     const tagDefs = [

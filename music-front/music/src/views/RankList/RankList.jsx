@@ -1,13 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import SubNav from '../Common/Header/SubNav/SubNav';
 import TagComponent from '../Common/Hooks/useTag';
 import { useLocation } from 'react-router-dom';
-import { getMVList } from '../../api/mv';
-import { throttleNow } from '../../utils';
-import { VideoCameraOutlined, PlayCircleOutlined } from '@ant-design/icons';
-import { Space } from 'antd';
 import './RankList.scss';
 import SongListComponent from '../Common/Hooks/useSongList';
+import { getRankList } from '../../api/song';
 
 export default function TopList() {
     const tagDefs = [
@@ -34,18 +31,17 @@ export default function TopList() {
 
     const location = useLocation()
     const searchParams = new URLSearchParams(location.search)
+    const [rankList, setRankList] = useState([])
 
-    // useEffect(() => {
+    useEffect(() => {
+        getRankList(parseInt(searchParams.get('top')) || 1).then((res) => {
+            if (res.data.code === 200) {
+                setRankList(res.data.rankList)
+            }
+        }).catch(() => { })
+    }, [location])
 
-    // }, location)
-
-    const styleSongListDefs = {
-        content: 'rankList-content',
-        button: 'rankList-content-button',
-        list: 'rankList-content-list',
-    }
-
-    const RankListSongList = <SongListComponent styleDefs={styleSongListDefs} />
+    const RankListSongList = <SongListComponent haveIndex={false} data={rankList} />
 
     return (
         <div className='header-wrapper'>

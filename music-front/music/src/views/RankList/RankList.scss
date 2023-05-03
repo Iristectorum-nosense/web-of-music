@@ -3,7 +3,7 @@
 $tag-font-size: 20px;
 
 .rankList {
-    margin: 5% 5% 5% 0;
+    margin: 5% 0;
     display: grid;
     grid-template-columns: 1fr 5fr;
 }
@@ -71,16 +71,4 @@ $tag-font-size: 20px;
     &:hover {
         color: $activeFont-color;
     }
-}
-
-.rankList-content {
-    margin-left: 5%;
-}
-
-.rankList-content-button {
-    margin: 2%;
-}
-
-.rankList-content-list {
-    background-color: bisque;
 }

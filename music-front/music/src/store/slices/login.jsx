@@ -73,21 +73,6 @@ export const resetPwAction = createAsyncThunk('login/resetPwAction', async (payl
     return response;
 })
 
-// export const checkJWTAction = createAsyncThunk('login/checkJWTAction', async (payload) => {
-//     let token = await checkJWT(null, 'get');
-//     let response = false
-//     if (Object.prototype.toString.call(token) === '[object Object]') {
-//         await checkJWT(payload, 'post').then((res) => {
-//             if (res.data.code === 405) {
-//                 message.error(res.data.message)
-//             } else {
-//                 response = true
-//             }
-//         }).catch(() => { })
-//     }
-//     return response;
-// })
-
 const loginSlice = createSlice({
     name: 'login',
     initialState: {
@@ -146,12 +131,6 @@ const loginSlice = createSlice({
                 state.loginInfos = action.payload.loginInfos
             }
         })
-        // builder.addCase(checkJWTAction.fulfilled, (state, action) => {
-        //     if (!action.payload) {
-        //         console.log(state.initialState)
-        //         state.loginInfos = state.initialState
-        //     }
-        // })
     }
 })
 

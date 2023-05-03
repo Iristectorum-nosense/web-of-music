@@ -516,8 +516,8 @@ def get_rank_list(request):
                 if len(songList) == 20:
                     break
                 singerObj = song.singer_set.all()
-                querySinger = singerObj.filter(tag__name=area_list[top-3])
-                if querySinger.exist():
+                querySinger = singerObj.filter(tags__name=area_list[top-3])
+                if querySinger.exists():
                     singerList = []
                     for singer in singerObj:
                         singer_dict = {
@@ -771,7 +771,7 @@ def insert(request):
     #     song.publish = timezone.make_aware(datetime.datetime(2023, 4, 14, 12, 0) + datetime.timedelta(days=(i-76)))
     #     song.save()
 
-    # for i in range(1, 100):
+    # for i in range(1, 101):
     #     song = Song.objects.get(id=i)
     #     if i % 10 == 1:
     #         song.time = timedelta(minutes=3, seconds=44)
