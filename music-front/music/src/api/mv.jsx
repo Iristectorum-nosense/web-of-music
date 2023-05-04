@@ -12,3 +12,14 @@ export const getMVList = (data) => {
         }
     })
 }
+
+//获取歌手页MV信息
+export const getSingerMV = (data) => {
+    const url = `singerMV`;
+    return instance.get(url, {
+        params: {
+            id: data.id,
+            index: data.index
+        }
+    })
+}

@@ -14,3 +14,23 @@ export const getSingerList = (data) => {
         }
     })
 }
+
+//获得歌手详情页公共信息
+export const getSingerInfo = (data) => {
+    const url = `singerInfo`;
+    return instance.get(url, {
+        params: {
+            id: data
+        }
+    })
+}
+
+//获得歌手详情页默认信息
+export const getSingerDefault = (data) => {
+    const url = `singerDefault`;
+    return instance.get(url, {
+        params: {
+            id: data
+        }
+    })
+}

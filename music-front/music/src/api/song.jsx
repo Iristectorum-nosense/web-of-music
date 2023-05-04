@@ -9,3 +9,14 @@ export const getRankList = (data) => {
         }
     })
 }
+
+//获取歌手页歌曲信息
+export const getSingerSong = (data) => {
+    const url = `singerSong`;
+    return instance.get(url, {
+        params: {
+            id: data.id,
+            index: data.index
+        }
+    })
+}

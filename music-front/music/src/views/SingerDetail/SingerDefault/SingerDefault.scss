@@ -1,0 +1,161 @@
+@import '../../Common/Styles/common.scss';
+
+.singerdefault-null {
+    display: flex;
+    justify-content: center;
+    margin: 100px;
+}
+
+.singerdefault-song,
+.singerdefault-album,
+.singerdefault-mv {
+    margin-bottom: 20px;
+}
+
+.singerdefault-title {
+    height: 50px;
+
+    span {
+        font-size: $middleFont-size;
+        margin-right: 20px;
+    }
+
+    a {
+        font-size: $mainFont-size;
+        color: $mainFont-color;
+
+        &:hover {
+            color: $activeBackGround-color;
+        }
+    }
+}
+
+.singerdefault-songList {
+    .content .content-list .content-list-item {
+        .content-list-item-index {
+            font-size: $subFont-size;
+        }
+
+        height: 50px;
+    }
+}
+
+.singerdefault-albumList {
+    display: grid;
+    grid-template-columns: repeat(4, 200px);
+    justify-content: space-between;
+
+    .singerdefault-albumList-item {
+        margin-bottom: 40px;
+        color: $mainFont-color;
+
+        a:has(img) {
+            display: block;
+            position: relative;
+            width: 200px;
+            height: 200px;
+            overflow: hidden;
+
+            img {
+                width: 100%;
+                height: 100%;
+                transition: transform .75s ease-in-out;
+            }
+
+            &:hover img {
+                transform: scale(1.2);
+            }
+        }
+
+        a {
+            cursor: pointer;
+            color: $mainFont-color;
+
+            &:hover {
+                color: $activeBackGround-color;
+            }
+        }
+
+        div {
+            margin-top: 10px;
+            width: 90%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+    }
+}
+
+.singerdefault-mvList {
+    display: grid;
+    grid-template-columns: repeat(4, 250px);
+    justify-content: space-between;
+
+    .singerdefault-mvList-item {
+        margin-bottom: 40px;
+        color: $mainFont-color;
+
+        a:has(img) {
+            display: block;
+            position: relative;
+            width: 250px;
+            height: calc(9 * 250px / 16);
+            overflow: hidden;
+
+            img {
+                width: 100%;
+                height: 100%;
+                transition: transform .75s ease-in-out;
+            }
+
+            &:hover img {
+                transform: scale(1.2);
+            }
+
+            .mask {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: $subBackGround-color;
+                opacity: 0;
+                transition: opacity 1s ease-in-out;
+
+                span {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) scale(4);
+                    color: $subFont-color;
+                }
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+        }
+
+        a {
+            cursor: pointer;
+            color: $mainFont-color;
+
+            &:hover {
+                color: $activeBackGround-color;
+            }
+        }
+
+        div {
+            margin-top: 10px;
+            width: 90%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            span {
+                margin-right: 10px;
+            }
+        }
+    }
+}

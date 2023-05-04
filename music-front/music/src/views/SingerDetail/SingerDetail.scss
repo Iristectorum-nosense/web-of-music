@@ -1,0 +1,69 @@
+@import '../Common/Styles/common.scss';
+
+.singer-info {
+    margin: 5% 0;
+    padding: 2% 40px;
+    height: 250px;
+    display: grid;
+    grid-template-columns: 300px auto;
+    background-color: $mainBackGround-color;
+
+    a {
+        width: 250px;
+        height: 250px;
+        border-radius: 125px;
+        overflow: hidden;
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    .singer-info-detail {
+        margin-left: 50px;
+        color: $mainFont-color;
+
+        a {
+            color: $mainFont-color;
+
+            &:hover {
+                color: $activeBackGround-color;
+            }
+        }
+
+        >div {
+            padding: 10px 0;
+        }
+
+        >div:nth-child(1) {
+            font-size: $bigFont-size;
+        }
+
+        >div:nth-child(2) {
+            font-size: $subFont-color;
+        }
+
+        >div:nth-child(3) {
+            font-size: large;
+
+            a,
+            span {
+                margin-right: 20px;
+            }
+        }
+
+        >div:nth-child(4) {
+
+            button {
+                color: $mainFont-color;
+
+                &:hover {
+                    color: $activeBackGround-color;
+                    border-color: $activeBackGround-color;
+                }
+            }
+        }
+    }
+
+}

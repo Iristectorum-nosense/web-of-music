@@ -537,6 +537,208 @@ def get_rank_list(request):
 
     return JsonResponse({'code': 503, 'message': 'No method'})
 
+
+def get_singer_info(request):
+    if request.method == 'GET':
+        id = int(request.GET.get('id', -1))
+
+        singerObj = Singer.objects.filter(id=id)
+        if singerObj.exists():
+            singer = Singer.objects.get(id=id)
+            singer_info = {
+                'id': singer.id,
+                'url': singer.url,
+                'name': singer.name,
+                'desc': singer.desc,
+                'songCount': singer.songs.count(),
+                'albumCount': singer.albums.count(),
+                'mvCount': singer.mvs.count(),
+            }
+
+            return JsonResponse({'code': 200, 'singerInfo': singer_info})
+        else:
+            return JsonResponse({'code': 405, 'message': '没有该信息'})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+def get_singer_default(request):
+    if request.method == 'GET':
+        id = int(request.GET.get('id', -1))
+
+        singerObj = Singer.objects.filter(id=id)
+        if singerObj.exists():
+            singer = Singer.objects.get(id=id)
+
+            songObj = singer.songs.all().order_by('play_count', 'star_count', 'id')[:10]
+            songList = []
+            for song in songObj:
+                singerObj = song.singer_set.all()
+                singerList = []
+                for singer in singerObj:
+                    singer_dict = {
+                        'id': singer.id,
+                        'name': singer.name
+                    }
+                    singerList.append(singer_dict)
+                song_dict = {
+                    'id': song.id,
+                    'name': song.name,
+                    'time': song.time,
+                    'singers': singerList
+                }
+                songList.append(song_dict)
+
+            albumObj = singer.albums.all().order_by('-publish', 'id')[0:4]
+            albumList = []
+            for album in albumObj:
+                album_dict = {
+                    'id': album.id,
+                    'url': album.url,
+                    'name': album.name,
+                    'publish': album.publish
+                }
+                albumList.append(album_dict)
+
+            mvObj = singer.mvs.all().order_by('play_count', 'star_count', 'id')[0:4]
+            mvList = []
+            for mv in mvObj:
+                mv_dict = {
+                    'id': mv.id,
+                    'url': mv.url,
+                    'name': mv.name,
+                    'play_count': mv.play_count
+                }
+                mvList.append(mv_dict)
+
+            singer_default = {
+                'id': singer.id,
+                'songs': songList,
+                'albums': albumList,
+                'mvs': mvList,
+            }
+
+            return JsonResponse({'code': 200, 'singerDefault': singer_default})
+        else:
+            return JsonResponse({'code': 405, 'message': '没有该信息'})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+def get_singer_song(request):
+    if request.method == 'GET':
+        id = int(request.GET.get('id', -1))
+        index = int(request.GET.get('index', 1))
+        limit = 10
+
+        singerObj = Singer.objects.filter(id=id)
+        if singerObj.exists():
+            singer = Singer.objects.get(id=id)
+
+            if singer.songs.count() < (index - 1) * limit or index < 0:
+                return JsonResponse({'code': 405, 'message': '没有该信息'})
+
+            songObj = singer.songs.all().order_by('play_count', 'star_count', 'id')[(index - 1) * limit: index * limit]
+            songList = []
+            for song in songObj:
+                singerObj = song.singer_set.all()
+                singerList = []
+                for singer in singerObj:
+                    singer_dict = {
+                        'id': singer.id,
+                        'name': singer.name
+                    }
+                    singerList.append(singer_dict)
+                song_dict = {
+                    'id': song.id,
+                    'name': song.name,
+                    'time': song.time,
+                    'singers': singerList
+                }
+                songList.append(song_dict)
+            singer_song = {
+                'songs': songList,
+                'count': singer.songs.count()
+            }
+
+            return JsonResponse({'code': 200, 'singerSong': singer_song})
+        else:
+            return JsonResponse({'code': 405, 'message': '没有该信息'})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+def get_singer_album(request):
+    if request.method == 'GET':
+        id = int(request.GET.get('id', -1))
+        index = int(request.GET.get('index', 1))
+        limit = 12
+
+        singerObj = Singer.objects.filter(id=id)
+        if singerObj.exists():
+            singer = Singer.objects.get(id=id)
+
+            if singer.albums.count() < (index - 1) * limit or index < 0:
+                return JsonResponse({'code': 405, 'message': '没有该信息'})
+
+            albumObj = singer.albums.all().order_by('-publish', 'id')[(index - 1) * limit: index * limit]
+            albumList = []
+            for album in albumObj:
+                album_dict = {
+                    'id': album.id,
+                    'url': album.url,
+                    'name': album.name,
+                    'publish': album.publish
+                }
+                albumList.append(album_dict)
+            singer_album = {
+                'albums': albumList,
+                'count': singer.albums.count()
+            }
+
+            return JsonResponse({'code': 200, 'singerAlbum': singer_album})
+        else:
+            return JsonResponse({'code': 405, 'message': '没有该信息'})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+def get_singer_mv(request):
+    if request.method == 'GET':
+        id = int(request.GET.get('id', -1))
+        index = int(request.GET.get('index', 1))
+        limit = 12
+
+        singerObj = Singer.objects.filter(id=id)
+        if singerObj.exists():
+            singer = Singer.objects.get(id=id)
+
+            if singer.mvs.count() < (index - 1) * limit or index < 0:
+                return JsonResponse({'code': 405, 'message': '没有该信息'})
+
+            mvObj = singer.mvs.all().order_by('-publish', 'id')[(index - 1) * limit: index * limit]
+            mvList = []
+            for mv in mvObj:
+                mv_dict = {
+                    'id': mv.id,
+                    'url': mv.url,
+                    'name': mv.name,
+                    'play_count': mv.play_count
+                }
+                mvList.append(mv_dict)
+
+            singer_mv = {
+                'mvs': mvList,
+                'count': singer.mvs.count()
+            }
+
+            return JsonResponse({'code': 200, 'singerMV': singer_mv})
+        else:
+            return JsonResponse({'code': 405, 'message': '没有该信息'})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
 # @ensure_csrf_cookie
 # def check_jwt(request):
 #     if request.method == 'GET':
@@ -878,5 +1080,55 @@ def insert(request):
     #         singer = Singer.objects.get(id=41)
     #         singer.songs.add(song)
 
+    # -----------------------album
+    # nameList = ['ON PLAY', '化风', '谒金门', '再见只是陌生人', '佛前叹两难'
+    #             'Album 1', 'Album 2', 'Album 3', 'Album 4', 'Album 5', 'Album 6', 'Album 7', 'Album 8', 'Album 9', 'Album 10',
+    #             'Album 11', 'Album 12', 'Album 13', 'Album 14', 'Album 15', 'Album 16', 'Album 17', 'Album 18', 'Album 19']
+    # time_month = [1, 1, 2, 3, 4,
+    #               4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
+    #               4, 4, 4, 4, 4, 4, 4, 5, 5]
+    # time_day = [5, 25, 17, 1, 7,
+    #             14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
+    #             24, 25, 26, 27, 28, 29, 30, 1, 2]
+    # time_hour = 12
+    # time_minute = 0
+    # url = '/media/album'
+    # for i in range(24):
+    #     album = Album(name=nameList[i], url=url, publish=timezone.make_aware(datetime.datetime(2023, time_month[i], time_day[i], time_hour, time_minute)))
+    #     album.save()
+
+    # -----------------------album-song
+    # for i in range(1, 6):
+    #     songs = Song.objects.all()[(i-1)*15: i*15]
+    #     print(i, '----', songs)
+    #     album = Album.objects.get(id=i)
+    #     for song in songs:
+    #         album.songs.add(song)
+
+    # for i in range(6, 25):
+    #     song = Song.objects.get(id=(70+i))
+    #     print(i, '----', song)
+    #     album = Album.objects.get(id=i)
+    #     album.songs.add(song)
+
+    # -----------------------album-singer
+    # for i in range(1, 25):
+    #     album = Album.objects.get(id=i)
+    #     if i in (1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15):
+    #         singer = Singer.objects.get(id=1)
+    #         singer.albums.add(album)
+    #     elif i in (3, 16, 17):
+    #         singer = Singer.objects.get(id=11)
+    #         singer.albums.add(album)
+    #     elif i in (4, 18, 19):
+    #         singer = Singer.objects.get(id=21)
+    #         singer.albums.add(album)
+    #     elif i in (5, 20, 21):
+    #         singer = Singer.objects.get(id=31)
+    #         singer.albums.add(album)
+    #     elif i in (22, 23, 24):
+    #         singer = Singer.objects.get(id=41)
+    #         singer.albums.add(album)
+    
     print('done')
     return JsonResponse({'code': 200})

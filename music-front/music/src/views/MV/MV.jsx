@@ -8,6 +8,7 @@ import { throttleNow } from '../../utils/throttle';
 import { formatPublish } from '../../utils/format';
 import { VideoCameraOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { Space } from 'antd';
+import { useClickNavigate } from '../Common/Hooks/useClickNavigate';
 
 export default function MV() {
     const tagDefs = [
@@ -100,6 +101,8 @@ export default function MV() {
         }
     }, [handleScroll])
 
+    const { handleSingerClick } = useClickNavigate()
+
     return (
         <div className='header-wrapper'>
             <SubNav></SubNav>
@@ -116,7 +119,7 @@ export default function MV() {
                             <div className='mv-content-item-font' >
                                 {
                                     mv.singers.map((singer) => (
-                                        <a key={singer.id} href='#' onClick={(e) => { e.preventDefault() }}>
+                                        <a key={singer.id} href='#' onClick={(e) => { e.preventDefault(); handleSingerClick(singer.id) }}>
                                             {singer.name}
                                         </a>
                                     ))

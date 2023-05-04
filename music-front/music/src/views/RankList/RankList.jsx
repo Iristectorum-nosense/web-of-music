@@ -41,14 +41,16 @@ export default function TopList() {
         }).catch(() => { })
     }, [location])
 
-    const RankListSongList = <SongListComponent haveIndex={false} data={rankList} />
+    const RankListSongList = <SongListComponent haveDelete={false} haveIndex={false} data={rankList} />
 
     return (
         <div className='header-wrapper'>
             <SubNav></SubNav>
             <div className='rankList'>
                 {RankListTag}
-                {RankListSongList}
+                <div className='rankList-content'>
+                    {RankListSongList}
+                </div>
             </div>
         </div>
     )

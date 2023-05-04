@@ -5,6 +5,7 @@ import TagComponent from '../Common/Hooks/useTag';
 import { useLocation } from 'react-router-dom';
 import { getSingerList } from '../../api/singer';
 import { throttleNow } from '../../utils/throttle';
+import { useClickNavigate } from '../Common/Hooks/useClickNavigate';
 
 export default function Singer() {
     const tagDefs = [
@@ -121,6 +122,8 @@ export default function Singer() {
         }
     }, [handleScroll])
 
+    const { handleSingerClick } = useClickNavigate()
+
     return (
         <div className='header-wrapper'>
             <SubNav></SubNav>
@@ -129,9 +132,21 @@ export default function Singer() {
                 {
                     singerList.map((singer) => (
                         <div key={singer.id} className='singer-content-item'>
-                            <img className='singer-content-item-img' src={`http://localhost:8000${singer.url}/${singer.id}.png`}
-                                alt={singer.name} loading='lazy' />
-                            <a href='#' className='singer-content-item-font' onClick={(e) => { e.preventDefault() }}>{singer.name}</a>
+                            <a href='#'
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    handleSingerClick(singer.id)
+                                }}
+                            >
+                                <img className='singer-content-item-img' src={`http://localhost:8000${singer.url}/${singer.id}.png`}
+                                    alt={singer.name} loading='lazy' />
+                            </a>
+                            <a href='#' className='singer-content-item-font'
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    handleSingerClick(singer.id)
+                                }}
+                            >{singer.name}</a>
                         </div>
                     ))
 

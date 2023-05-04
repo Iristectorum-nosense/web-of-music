@@ -76,12 +76,18 @@ class Song(models.Model):
         db_table = 'song'
 
 
-# # album table
-# class Album(models.Model):
-#     object = models.Manager()
-#     id = models.AutoField(primary_key=True)
-#     url = models.CharField(default='', max_length=64)
-#     name = models.CharField(default='', max_length=64)
+# album table
+class Album(models.Model):
+    objects = models.Manager()
+    id = models.AutoField(primary_key=True)
+    url = models.CharField(default='', max_length=64)
+    name = models.CharField(default='', max_length=64)
+    publish = models.DateTimeField()
+    songs = models.ManyToManyField(Song)
+
+    class Meta:
+        db_table = 'album'
+
 
 # singerTag table
 class SingerTag(models.Model):
@@ -102,7 +108,7 @@ class Singer(models.Model):
     tags = models.ManyToManyField(SingerTag)
     mvs = models.ManyToManyField(MV)
     songs = models.ManyToManyField(Song)
-    # albums = models.ManyToManyField(Album)
+    albums = models.ManyToManyField(Album)
 
     class Meta:
         db_table = 'singer'

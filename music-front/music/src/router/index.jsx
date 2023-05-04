@@ -9,6 +9,14 @@ const Singer = lazy(() => import('../views/Singer/Singer'));
 const MV = lazy(() => import('../views/MV/MV'));
 const RankList = lazy(() => import('../views/RankList/RankList'));
 const MySettng = lazy(() => import('../views/MySetting/MySettng'));
+const SingerDetail = lazy(() => import('../views/SingerDetail/SingerDetail'));
+const SingerDefault = lazy(() => import('../views/SingerDetail/SingerDefault/SingerDefault'));
+const SingerSong = lazy(() => import('../views/SingerDetail/SingerSong/SingerSong'));
+const SingerAlbum = lazy(() => import('../views/SingerDetail/SingerAlbum/SingerAlbum'));
+const SingerMV = lazy(() => import('../views/SingerDetail/SingerMV/SingerMV'));
+const AlbumDetail = lazy(() => import('../views/AlbumDetail/AlbumDetail'));
+
+
 const MyMusic = lazy(() => import('../views/MyMusic/MyMusic'));
 const NotFound = lazy(() => import('../views/Common/NotFound/NotFound'));
 const NotServer = lazy(() => import('../views/Common/NotServer/NotServer'));
@@ -55,6 +63,50 @@ export const routes = [
                 element: React.createElement(MySettng),
                 meta: {
                     auth: true
+                },
+            },
+            {
+                path: 'singerDetail/:id',
+                element: React.createElement(SingerDetail),
+                meta: {
+                    auth: false
+                },
+                children: [
+                    {
+                        path: '',
+                        element: React.createElement(SingerDefault),
+                        meta: {
+                            auth: false
+                        }
+                    },
+                    {
+                        path: 'song',
+                        element: React.createElement(SingerSong),
+                        meta: {
+                            auth: false
+                        }
+                    },
+                    {
+                        path: 'album',
+                        element: React.createElement(SingerAlbum),
+                        meta: {
+                            auth: false
+                        }
+                    },
+                    {
+                        path: 'mv',
+                        element: React.createElement(SingerMV),
+                        meta: {
+                            auth: false
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'albumDetail',
+                element: React.createElement(AlbumDetail),
+                meta: {
+                    auth: false
                 },
             },
             {

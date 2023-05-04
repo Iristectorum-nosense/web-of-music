@@ -1,8 +1,6 @@
 @import '../../Common/Styles/common.scss';
 
 .content {
-    margin-left: 5%;
-
     .content-button {
         margin: 2%;
     }
@@ -10,6 +8,7 @@
     .content-list {
         font-size: $subFont-size;
         color: $subFont-color;
+        background-color: $mainBackGround-color;
 
         .content-list-header {
             display: grid;
@@ -22,19 +21,19 @@
                 padding: 10px;
                 min-width: 50px;
             }
+
+            li:first-child {
+                padding-left: 30px;
+            }
+        }
+
+        .content-list-item:nth-child(even) {
+            background-color: $activeFont-color;
         }
 
         .content-list-item {
-            grid-template-columns: 1fr 4fr 1.5fr 1fr;
-        }
-
-        .content-list-item-disable-index {
-            grid-template-columns: 4fr 1.5fr 1fr;
-        }
-
-        .content-list-item,
-        .content-list-item-disable-index {
             display: grid;
+            grid-template-columns: 1fr 4fr 1.5fr 1fr;
             align-items: center;
             height: 100px;
             line-height: 1;
@@ -47,6 +46,7 @@
             }
 
             .content-list-item-index {
+                padding-left: 30px;
                 font-size: large;
             }
 

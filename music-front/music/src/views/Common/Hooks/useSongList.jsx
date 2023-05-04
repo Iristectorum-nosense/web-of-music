@@ -6,6 +6,7 @@ import PageComponent from './usePagination';
 import { formatTime } from '../../../utils/format';
 import './useSongList.scss';
 import { useLocation } from 'react-router-dom';
+import { useClickNavigate } from './useClickNavigate';
 
 function useSongList(data) {
     const [bulk, setBulk] = useState(false)
@@ -18,6 +19,8 @@ function useSongList(data) {
     )
 
     const location = useLocation()
+    const searchParams = new URLSearchParams(location.search)
+    const pageIndex = parseInt(searchParams.get('index')) || 1
 
     useEffect(() => {
         setBulk(false)
@@ -74,13 +77,25 @@ function useSongList(data) {
         )
     }
 
-    return { bulk, optionAll, options, handlePlayClick, handleFavorClick, handleBulkClick, handleOptionChange, handleOptionAll };
+
+    return {
+        bulk, optionAll, options, pageIndex,
+        handlePlayClick, handleFavorClick, handleBulkClick, handleOptionChange, handleOptionAll
+    };
 }
 
 
-export default function SongListComponent({ haveOption = true, haveDelete = true, haveIndex = true, data = [] }) {
+export default function SongListComponent({ haveOption = true, haveImg = true, haveDelete = true, haveIndex = true, data = [], pageNum = 0 }) {
+    //haveOption:是否需要按钮及批量操作
+    //haveImg:是否显示歌曲图片
+    //haveDelete:是否显示删除歌曲图标
+    //haveIndex:是否需要分页
 
-    const { bulk, optionAll, options, handlePlayClick, handleFavorClick, handleBulkClick, handleOptionChange, handleOptionAll } = useSongList(data)
+    const { bulk, optionAll, options, pageIndex,
+        handlePlayClick, handleFavorClick, handleBulkClick, handleOptionChange, handleOptionAll } = useSongList(data)
+
+
+    const { handleSingerClick } = useClickNavigate()
 
     const token = cookie.load('jwtToken')
 
@@ -111,17 +126,25 @@ export default function SongListComponent({ haveOption = true, haveDelete = true
                 <ul>
                     {
                         data.map((song, index) => (
-                            <li key={song.id} className={haveOption ? 'content-list-item' : 'content-list-item-disable-index'} >
+                            <li key={song.id} className='content-list-item' >
                                 {
                                     haveOption ? (
                                         <span className='content-list-item-index'>
                                             {bulk && <input type='checkbox' id={song.id} checked={options.find((option) => option.id === song.id).option} onChange={() => handleOptionChange(song.id)} />}
-                                            {index + 1}
+                                            {(pageIndex - 1) * 10 + index + 1}
                                         </span>
-                                    ) : null
+                                    ) : (
+                                        <span className='content-list-item-index'>
+                                            {(pageIndex - 1) * 10 + index + 1}
+                                        </span>
+                                    )
                                 }
                                 <span>
-                                    <a href='#' onClick={(e) => { e.preventDefault() }} ><img src={`http://localhost:8000${song.url}/${song.id}.png`} alt={song.name} loading='lazy' /></a>
+                                    {
+                                        haveImg
+                                            ? <a href='#' onClick={(e) => { e.preventDefault() }} ><img src={`http://localhost:8000${song.url}/${song.id}.png`} alt={song.name} loading='lazy' /></a>
+                                            : null
+                                    }
                                     <a href='#' onClick={(e) => { e.preventDefault() }} >{song.name}</a>
                                     <PlayCircleOutlined />
                                     <PlusSquareOutlined />
@@ -132,7 +155,7 @@ export default function SongListComponent({ haveOption = true, haveDelete = true
                                 <span>
                                     {
                                         song.singers.map((singer) => (
-                                            <a key={singer.id} href='#' onClick={(e) => { e.preventDefault() }}>
+                                            <a key={singer.id} href='#' onClick={(e) => { e.preventDefault(); handleSingerClick(singer.id) }}>
                                                 {singer.name}
                                             </a>
                                         ))
@@ -145,7 +168,7 @@ export default function SongListComponent({ haveOption = true, haveDelete = true
                 </ul>
             </div>
             {
-                haveIndex ? <PageComponent pageNum={data.pageNum} /> : null
+                haveIndex && pageNum !== 0 ? <PageComponent pageNum={pageNum} /> : null
             }
         </div >
     )
