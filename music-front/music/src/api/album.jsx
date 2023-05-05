@@ -10,3 +10,13 @@ export const getSingerAlbum = (data) => {
         }
     })
 }
+
+//获得专辑详情页信息
+export const getAlbumInfo = (data) => {
+    const url = `albumInfo`;
+    return instance.get(url, {
+        params: {
+            id: data
+        }
+    })
+}

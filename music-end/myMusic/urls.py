@@ -17,6 +17,9 @@ urlpatterns = [
     path('singerSong', views.get_singer_song),
     path('singerAlbum', views.get_singer_album),
     path('singerMV', views.get_singer_mv),
+    path('albumInfo', views.get_album_info),
+    path('songInfo', views.get_song_info),
+
 
     path('user/insert', views.insert),
 ]

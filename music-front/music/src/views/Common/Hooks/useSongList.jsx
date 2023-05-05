@@ -95,7 +95,7 @@ export default function SongListComponent({ haveOption = true, haveImg = true, h
         handlePlayClick, handleFavorClick, handleBulkClick, handleOptionChange, handleOptionAll } = useSongList(data)
 
 
-    const { handleSingerClick } = useClickNavigate()
+    const { handleSingerClick, handleSongClick } = useClickNavigate()
 
     const token = cookie.load('jwtToken')
 
@@ -142,10 +142,10 @@ export default function SongListComponent({ haveOption = true, haveImg = true, h
                                 <span>
                                     {
                                         haveImg
-                                            ? <a href='#' onClick={(e) => { e.preventDefault() }} ><img src={`http://localhost:8000${song.url}/${song.id}.png`} alt={song.name} loading='lazy' /></a>
+                                            ? <a href='#' onClick={(e) => { e.preventDefault(); handleSongClick(song.id) }} ><img src={`http://localhost:8000${song.url}/${song.id}.png`} alt={song.name} loading='lazy' /></a>
                                             : null
                                     }
-                                    <a href='#' onClick={(e) => { e.preventDefault() }} >{song.name}</a>
+                                    <a href='#' onClick={(e) => { e.preventDefault(); handleSongClick(song.id) }} >{song.name}</a>
                                     <PlayCircleOutlined />
                                     <PlusSquareOutlined />
                                     {

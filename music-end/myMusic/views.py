@@ -739,6 +739,121 @@ def get_singer_mv(request):
     return JsonResponse({'code': 503, 'message': 'No method'})
 
 
+def get_album_info(request):
+    if request.method == 'GET':
+        id = int(request.GET.get('id', -1))
+
+        albumObj = Album.objects.filter(id=id)
+
+        if albumObj.exists():
+            album = Album.objects.get(id=id)
+
+            singerObj = album.singer_set.all()
+            singerList = []
+            for singer in singerObj:
+                singer_dict = {
+                    'id': singer.id,
+                    'name': singer.name
+                }
+                singerList.append(singer_dict)
+
+            songObj = album.songs.all()
+            songList = []
+            for song in songObj:
+                song_singerObj = song.singer_set.all()
+                song_singerList = []
+                for singer in song_singerObj:
+                    singer_dict = {
+                        'id': singer.id,
+                        'name': singer.name
+                    }
+                    song_singerList.append(singer_dict)
+                song_dict = {
+                    'id': song.id,
+                    'name': song.name,
+                    'time': song.time,
+                    'singers': song_singerList
+                }
+                songList.append(song_dict)
+
+            album_info = {
+                'id': album.id,
+                'url': album.url,
+                'name': album.name,
+                'publish': album.publish,
+                'singers': singerList,
+                'songs': songList
+            }
+
+            return JsonResponse({'code': 200, 'albumInfo': album_info})
+        else:
+            return JsonResponse({'code': 405, 'message': '没有该信息'})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+def get_song_info(request):
+    if request.method == 'GET':
+        id = int(request.GET.get('id', -1))
+
+        songObj = Song.objects.filter(id=id)
+
+        if songObj.exists():
+            song = Song.objects.get(id=id)
+
+            singerObj = song.singer_set.all()
+            singerList = []
+            for singer in singerObj:
+                singer_dict = {
+                    'id': singer.id,
+                    'name': singer.name
+                }
+                singerList.append(singer_dict)
+
+            albumObj = song.album_set.all()
+            albumList = []
+            for album in albumObj:
+                album_dict = {
+                    'id': album.id,
+                    'name': album.name
+                }
+                albumList.append(album_dict)
+
+            mv = song.mv
+            mvList = []
+            if mv:
+                mv_singerObj = mv.singer_set.all()
+                mv_singerList = []
+                for singer in mv_singerObj:
+                    singer_dict = {
+                        'id': singer.id,
+                        'name': singer.name
+                    }
+                    mv_singerList.append(singer_dict)
+                mv_dict = {
+                    'id': mv.id,
+                    'name': mv.name,
+                    'url': mv.url,
+                    'singers': singerList
+                }
+                mvList.append(mv_dict)
+
+            song_info = {
+                'id': song.id,
+                'url': song.url,
+                'name': song.name,
+                'publish': song.publish,
+                'singers': singerList,
+                'albums': albumList,
+                'mvs': mvList
+            }
+
+            return JsonResponse({'code': 200, 'songInfo': song_info})
+        else:
+            return JsonResponse({'code': 405, 'message': '没有该信息'})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
 # @ensure_csrf_cookie
 # def check_jwt(request):
 #     if request.method == 'GET':

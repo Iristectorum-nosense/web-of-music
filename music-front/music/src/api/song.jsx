@@ -20,3 +20,13 @@ export const getSingerSong = (data) => {
         }
     })
 }
+
+//获取歌曲详情页信息
+export const getSongInfo = (data) => {
+    const url = `songInfo`;
+    return instance.get(url, {
+        params: {
+            id: data
+        }
+    })
+}

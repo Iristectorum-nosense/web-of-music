@@ -1,0 +1,86 @@
+@import '../Common/Styles/common.scss';
+
+$duration: 6s;
+
+.album-info {
+    margin: 5% 0;
+    padding: 2% 40px;
+    height: 250px;
+    display: grid;
+    grid-template-columns: 300px auto;
+    background-color: $mainBackGround-color;
+
+    a {
+        position: relative;
+        width: 250px;
+        height: 250px;
+        border-radius: 125px;
+        overflow: hidden;
+
+        img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            animation: rotation $duration infinite linear;
+            animation-play-state: paused;
+
+            &:hover {
+                animation-play-state: running;
+            }
+        }
+
+        @keyframes rotation {
+            0% {}
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    }
+
+    .album-info-detail {
+        margin-left: 50px;
+        color: $mainFont-color;
+
+        a {
+            color: $mainFont-color;
+
+            &:hover {
+                color: $activeBackGround-color;
+            }
+        }
+
+        >div {
+            padding: 10px 0;
+
+            >span {
+                margin-right: 10px;
+            }
+
+            button {
+                color: $mainFont-color;
+
+                &:hover {
+                    color: $activeBackGround-color;
+                    border-color: $activeBackGround-color;
+                }
+            }
+        }
+
+        >div:nth-child(1) {
+            font-size: $bigFont-size;
+        }
+    }
+}
+
+.albuminfo-songList {
+    .content .content-list .content-list-item {
+        .content-list-item-index {
+            font-size: $subFont-size;
+        }
+
+        height: 50px;
+    }
+
+    margin-bottom: 50px;
+}
