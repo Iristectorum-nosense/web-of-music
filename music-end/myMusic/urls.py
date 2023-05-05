@@ -19,7 +19,7 @@ urlpatterns = [
     path('singerMV', views.get_singer_mv),
     path('albumInfo', views.get_album_info),
     path('songInfo', views.get_song_info),
-
+    path('home', views.get_home),
 
     path('user/insert', views.insert),
 ]

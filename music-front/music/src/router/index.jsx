@@ -16,7 +16,7 @@ const SingerAlbum = lazy(() => import('../views/SingerDetail/SingerAlbum/SingerA
 const SingerMV = lazy(() => import('../views/SingerDetail/SingerMV/SingerMV'));
 const AlbumDetail = lazy(() => import('../views/AlbumDetail/AlbumDetail'));
 const SongDetail = lazy(() => import('../views/SongDetail/SongDetail'));
-
+const MVDetail = lazy(() => import('../views/MVDetail/MVDetail'));
 const MyMusic = lazy(() => import('../views/MyMusic/MyMusic'));
 const NotFound = lazy(() => import('../views/Common/NotFound/NotFound'));
 const NotServer = lazy(() => import('../views/Common/NotServer/NotServer'));
@@ -112,6 +112,13 @@ export const routes = [
             {
                 path: 'songDetail/:id',
                 element: React.createElement(SongDetail),
+                meta: {
+                    auth: false
+                },
+            },
+            {
+                path: 'mvDetail/:id',
+                element: React.createElement(MVDetail),
                 meta: {
                     auth: false
                 },

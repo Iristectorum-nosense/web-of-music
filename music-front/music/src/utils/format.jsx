@@ -1,5 +1,3 @@
-import { getLyric } from "../api/song"
-
 //处理出版时间xxxx-xx-xx
 export function formatPublish(time) {
     return new Date(time).toISOString().slice(0, 10)

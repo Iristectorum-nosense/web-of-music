@@ -854,6 +854,121 @@ def get_song_info(request):
 
     return JsonResponse({'code': 503, 'message': 'No method'})
 
+
+def get_home(request):
+    if request.method == 'GET':
+        albumObj = Album.objects.all().order_by('-publish', 'id')[:16]
+        albumList = []
+        for album in albumObj:
+            album_singerObj = album.singer_set.all()
+            album_singerList = []
+            for singer in album_singerObj:
+                singer_dict = {
+                    'id': singer.id,
+                    'name': singer.name
+                }
+                album_singerList.append(singer_dict)
+            album_dict = {
+                'id': album.id,
+                'name': album.name,
+                'url': album.url,
+                'singers': album_singerList
+            }
+            albumList.append(album_dict)
+
+        topObj_hot = Song.objects.all().order_by('play_count', 'star_count', 'id')[:3]
+        topList_hot = []
+        for top_hot in topObj_hot:
+            top_hot_singerObj = top_hot.singer_set.all()
+            top_hot_singerList = []
+            for singer in top_hot_singerObj:
+                singer_dict = {
+                    'id': singer.id,
+                    'name': singer.name
+                }
+                top_hot_singerList.append(singer_dict)
+            top_dict = {
+                'id': top_hot.id,
+                'name': top_hot.name,
+                'singers': top_hot_singerList
+            }
+            topList_hot.append(top_dict)
+
+        topObj_new = Song.objects.all().order_by('-publish', 'id')[:3]
+        topList_new = []
+        for top_new in topObj_new:
+            top_new_singerObj = top_new.singer_set.all()
+            top_new_singerList = []
+            for singer in top_new_singerObj:
+                singer_dict = {
+                    'id': singer.id,
+                    'name': singer.name
+                }
+                top_new_singerList.append(singer_dict)
+            top_dict = {
+                'id': top_new.id,
+                'name': top_new.name,
+                'singers': top_new_singerList
+            }
+            topList_new.append(top_dict)
+
+        topObj_china = Song.objects.all().order_by('play_count', 'star_count', 'id')
+        topList_china = []
+        for top_china in topObj_china:
+            if len(topList_china) == 3:
+                break
+            top_china_singerObj = top_china.singer_set.all()
+            querySinger = top_china_singerObj.filter(tags__name='中国')
+            if querySinger.exists():
+                top_china_singerList = []
+                for singer in top_china_singerObj:
+                    singer_dict = {
+                        'id': singer.id,
+                        'name': singer.name
+                    }
+                    top_china_singerList.append(singer_dict)
+                top_dict = {
+                    'id': top_china.id,
+                    'name': top_china.name,
+                    'singers': top_china_singerList
+                }
+                topList_china.append(top_dict)
+
+        rankObj = {
+            'hot': topList_hot,
+            'new': topList_new,
+            'china': topList_china
+        }
+
+        mvObj = MV.objects.all().order_by('play_count', 'star_count', 'id')[:30]
+        mvList = []
+        for mv in mvObj:
+            mv_singerObj = mv.singer_set.all()
+            mv_singerList = []
+            for singer in mv_singerObj:
+                singer_dict = {
+                    'id': singer.id,
+                    'name': singer.name
+                }
+                mv_singerList.append(singer_dict)
+            mv_dict = {
+                'id': mv.id,
+                'name': mv.name,
+                'url': mv.url,
+                'singers': mv_singerList
+            }
+            mvList.append(mv_dict)
+
+        homeObj = {
+            'albumList': albumList,
+            'rankObj': rankObj,
+            'mvList': mvList
+        }
+
+        return JsonResponse({'code': 200, 'home': homeObj})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
 # @ensure_csrf_cookie
 # def check_jwt(request):
 #     if request.method == 'GET':

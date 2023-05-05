@@ -27,8 +27,12 @@ export function useClickNavigate() {
         navigate(`/songDetail/${id}`)
     }
 
+    const handleMVClick = (id) => {
+        navigate(`/mvDetail/${id}`)
+    }
+
     return {
         handleSingerClick, handleSingerSongClick, handleSingerAlbumClick, handleSingerMVClick,
-        handleAlbumClick, handleSongClick
+        handleAlbumClick, handleSongClick, handleMVClick
     };
 }

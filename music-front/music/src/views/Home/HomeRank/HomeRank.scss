@@ -1,0 +1,62 @@
+@import '../../Common/Styles/common.scss';
+
+.home-rank {
+    margin-bottom: 70px;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 300px);
+    justify-content: space-around;
+    align-items: center;
+    color: $activeFont-color;
+
+    .home-rank-song {
+        align-self: stretch;
+
+        >div {
+            padding: 20px 0;
+        }
+
+        >div>div {
+            width: 220px;
+            margin-top: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        span {
+            margin-right: 10px;
+        }
+
+        a {
+            color: $activeFont-color;
+        }
+    }
+
+    >div {
+        height: 500px;
+        display: grid;
+        grid-template-rows: 100px 10px auto;
+        justify-content: center;
+        align-items: center;
+
+        >a {
+            font-size: $middleFont-size;
+            color: $activeFont-color;
+            text-align: center;
+        }
+    }
+
+    >div:nth-child(1) {
+        background-color: rgba(212, 53, 53, 0.5);
+    }
+
+    >div:nth-child(2) {
+        background-color: rgba(70, 123, 192, 0.5);
+    }
+
+    >div:nth-child(3) {
+        background-color: rgba(70, 192, 121, 0.5);
+    }
+}

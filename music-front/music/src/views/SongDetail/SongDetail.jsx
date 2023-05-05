@@ -65,11 +65,14 @@ export default function SongDetail() {
                                 <div>
                                     专辑：
                                     {
-                                        songInfo.albums.map((album) => (
-                                            <a key={album.id} href='#' onClick={(e) => { e.preventDefault(); handleAlbumClick(album.id) }}>
-                                                {album.name}
-                                            </a>
-                                        ))
+                                        songInfo.albums.length !== 0
+                                            ? (
+                                                songInfo.albums.map((album) => (
+                                                    <a key={album.id} href='#' onClick={(e) => { e.preventDefault(); handleAlbumClick(album.id) }}>
+                                                        {album.name}
+                                                    </a>
+                                                ))
+                                            ) : '暂无'
                                     }
                                 </div>
                                 <div>发行时间：{formatPublish(songInfo.publish)}</div>

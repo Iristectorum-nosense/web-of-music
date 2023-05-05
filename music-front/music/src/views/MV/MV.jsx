@@ -101,7 +101,7 @@ export default function MV() {
         }
     }, [handleScroll])
 
-    const { handleSingerClick } = useClickNavigate()
+    const { handleSingerClick, handleMVClick } = useClickNavigate()
 
     return (
         <div className='header-wrapper'>
@@ -111,11 +111,11 @@ export default function MV() {
                 {
                     mvList.map((mv) => (
                         <div key={mv.id} className='mv-content-item'>
-                            <a href='#' className='mv-content-item-img' onClick={(e) => { e.preventDefault() }}>
+                            <a href='#' className='mv-content-item-img' onClick={(e) => { e.preventDefault(); handleMVClick(mv.id) }}>
                                 <img src={`http://localhost:8000${mv.url}/mask/${mv.id}.png`} alt={mv.name} loading='lazy' />
                                 <span className='mask'><PlayCircleOutlined /></span>
                             </a>
-                            <a href='#' className='mv-content-item-font' onClick={(e) => { e.preventDefault() }}>{mv.name}</a>
+                            <a href='#' className='mv-content-item-font' onClick={(e) => { e.preventDefault(); handleMVClick(mv.id) }}>{mv.name}</a>
                             <div className='mv-content-item-font' >
                                 {
                                     mv.singers.map((singer) => (

@@ -1,0 +1,9 @@
+@import '../Common/Styles/common.scss';
+
+.home-title {
+    display: flex;
+    height: 120px;
+    font-size: $bigFont-size;
+    justify-content: center;
+    align-items: center;
+}

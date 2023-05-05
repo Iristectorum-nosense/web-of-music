@@ -1,0 +1,97 @@
+@import '../../Common/Styles/common.scss';
+
+$duration: 1s;
+$banner-color: rgb(220, 220, 220);
+
+.banner {
+    margin-bottom: 30px;
+    position: relative;
+
+    &:hover {
+
+        .slide-left,
+        .slide-right {
+            display: flex;
+            z-index: 2;
+        }
+    }
+
+    .slide-left,
+    .slide-right {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 40%;
+        width: 80px;
+        height: 120px;
+        background-color: $banner-color;
+        animation: transform $duration;
+        border: none;
+    }
+
+    @keyframes transform {
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .slide-left {
+        transform: translateY(-50%);
+
+        &::before {
+            content: '';
+            display: block;
+            width: 30px;
+            height: 30px;
+            border: 2px solid $subFont-color;
+            border-right-color: transparent;
+            border-top-color: transparent;
+            transform: rotate(45deg);
+        }
+    }
+
+    .slide-right {
+        left: 100%;
+        transform: translateX(-100%) translateY(-50%);
+
+        &::before {
+            content: '';
+            display: block;
+            width: 30px;
+            height: 30px;
+            border: 2px solid $subFont-color;
+            border-right-color: transparent;
+            border-top-color: transparent;
+            transform: rotate(225deg);
+        }
+    }
+
+    .bottom {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translate(-50%, -100%);
+        height: 50px;
+
+        .bottom-dot {
+            margin: 0 20px;
+            width: 10px;
+            height: 10px;
+            border-radius: 10px;
+            background-color: $banner-color;
+        }
+
+        .bottom-dot-selected {
+            background-color: $subFont-color;
+        }
+    }
+}
