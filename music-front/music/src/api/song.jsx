@@ -30,3 +30,9 @@ export const getSongInfo = (data) => {
         }
     })
 }
+
+//获取歌词
+export const getLyric = async (data) => {
+    const url = data;
+    return instance.get(url);
+}

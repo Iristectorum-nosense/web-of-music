@@ -845,7 +845,7 @@ def get_song_info(request):
                 'publish': song.publish,
                 'singers': singerList,
                 'albums': albumList,
-                'mvs': mvList
+                'mv': mvList
             }
 
             return JsonResponse({'code': 200, 'songInfo': song_info})

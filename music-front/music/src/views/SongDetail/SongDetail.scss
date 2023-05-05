@@ -1,0 +1,168 @@
+@import '../Common/Styles/common.scss';
+
+.song-info {
+    margin: 5% 0;
+    padding: 2% 40px;
+    height: 250px;
+    display: grid;
+    grid-template-columns: 300px auto;
+    background-color: $mainBackGround-color;
+
+    a {
+        width: 250px;
+        height: 250px;
+        border-radius: 50px;
+        overflow: hidden;
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    .song-info-detail {
+        margin-left: 50px;
+        color: $mainFont-color;
+
+        a {
+            color: $mainFont-color;
+
+            &:hover {
+                color: $activeBackGround-color;
+            }
+        }
+
+        >div {
+            padding: 10px 0;
+
+            >span {
+                margin-right: 10px;
+            }
+
+            button {
+                color: $mainFont-color;
+                margin-right: 20px;
+
+                &:hover {
+                    color: $activeBackGround-color;
+                    border-color: $activeBackGround-color;
+                }
+            }
+        }
+
+        >div:nth-child(1) {
+            font-size: $bigFont-size;
+        }
+    }
+}
+
+.song-content {
+    margin: 5% 0;
+    padding: 2% 40px;
+    display: grid;
+    grid-template-columns: 500px 250px;
+    justify-content: space-between;
+    color: $mainFont-color;
+
+    .song-content-lyric {
+        div {
+            margin-bottom: 10px;
+            font-size: $subFont-size;
+        }
+
+        >div:first-child {
+            font-size: large;
+            margin-bottom: 20px;
+        }
+
+        button {
+            border-color: $activeBackGround-color;
+            border-top-color: transparent;
+            border-bottom-color: transparent;
+            border-radius: 10%;
+            box-shadow: none;
+            color: $activeBackGround-color;
+            margin-right: 20px;
+
+            &:hover {
+                color: $activeBackGround-color;
+                border-color: $activeBackGround-color;
+                border-top-color: transparent;
+                border-bottom-color: transparent;
+            }
+        }
+
+        .song-content-lyric-part {
+            height: 500px;
+            overflow: hidden;
+        }
+    }
+
+    .song-content-mv {
+        margin-bottom: 40px;
+        color: $mainFont-color;
+
+        a:has(img) {
+            display: block;
+            position: relative;
+            width: 250px;
+            height: calc(9 * 250px / 16);
+            overflow: hidden;
+
+            img {
+                width: 100%;
+                height: 100%;
+                transition: transform .75s ease-in-out;
+            }
+
+            &:hover img {
+                transform: scale(1.2);
+            }
+
+            .mask {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: $subBackGround-color;
+                opacity: 0;
+                transition: opacity 1s ease-in-out;
+
+                span {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) scale(4);
+                    color: $subFont-color;
+                }
+
+                &:hover {
+                    opacity: 1;
+                }
+            }
+        }
+
+        a {
+            cursor: pointer;
+            color: $mainFont-color;
+
+            &:hover {
+                color: $activeBackGround-color;
+            }
+        }
+
+        div {
+            margin-top: 10px;
+            width: 90%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+
+            span {
+                margin-right: 10px;
+            }
+        }
+    }
+
+}
