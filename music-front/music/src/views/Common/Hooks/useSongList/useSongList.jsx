@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import cookie from 'react-cookies';
 import { Button } from 'antd';
 import { CustomerServiceOutlined, FolderAddOutlined, PlusSquareOutlined, BarsOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons';
-import PageComponent from './usePagination';
-import { formatTime } from '../../../utils/format';
+import PageComponent from '../usePagination/usePagination';
+import { formatTime } from '../../../../utils/format';
 import './useSongList.scss';
 import { useLocation } from 'react-router-dom';
-import { useClickNavigate } from './useClickNavigate';
+import { useClickNavigate } from '../useClickNavigate';
 
 function useSongList(data) {
     const [bulk, setBulk] = useState(false)

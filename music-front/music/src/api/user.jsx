@@ -1,5 +1,4 @@
 import instance from './axios.jsx';
-import cookie from 'react-cookies';
 
 //重置个人信息
 export const resetUserInfos = (data) => {

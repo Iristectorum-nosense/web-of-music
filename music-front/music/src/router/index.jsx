@@ -5,6 +5,7 @@ import { Spin } from 'antd';
 
 const App = lazy(() => import('../App'));
 const Home = lazy(() => import('../views/Home/Home'));
+const Search = lazy(() => import('../views/Search/Search'));
 const Singer = lazy(() => import('../views/Singer/Singer'));
 const MV = lazy(() => import('../views/MV/MV'));
 const RankList = lazy(() => import('../views/RankList/RankList'));
@@ -33,6 +34,13 @@ export const routes = [
             {
                 path: '',
                 element: React.createElement(Home),
+                meta: {
+                    auth: false,
+                }
+            },
+            {
+                path: 'search/:info',
+                element: React.createElement(Search),
                 meta: {
                     auth: false,
                 }

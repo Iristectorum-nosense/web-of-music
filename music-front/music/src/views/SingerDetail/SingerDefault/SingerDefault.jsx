@@ -3,7 +3,7 @@ import { getSingerDefault } from '../../../api/singer';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { message } from 'antd';
 import './SingerDefault.scss';
-import SongListComponent from '../../Common/Hooks/useSongList';
+import SongListComponent from '../../Common/Hooks/useSongList/useSongList';
 import MVDisplay from './MVDisplay';
 import AlbumDisplay from './AlbumDisplay';
 import { useClickNavigate } from '../../Common/Hooks/useClickNavigate';

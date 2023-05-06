@@ -1,0 +1,130 @@
+@import '../Common/Styles/common.scss';
+
+.search-tag {
+    margin: 5% 0;
+    background-color: $mainBackGround-color;
+}
+
+.search-tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.search-tag-item {
+    margin: 2% 5%;
+    padding: 0.5% 1%;
+    border: 1px solid transparent;
+    font-size: large;
+    cursor: pointer;
+
+    &:hover {
+        color: $activeBackGround-color;
+    }
+}
+
+.search-tag-item-selected {
+    border-bottom: 3px solid $activeBackGround-color;
+    color: $activeBackGround-color;
+}
+
+.search-content {
+    .search-null {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 500px;
+        font-size: $middleFont-size;
+    }
+
+    .loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 10%;
+    }
+
+    .search-content-song .content .content-list .content-list-item {
+        .content-list-item-index {
+            font-size: $subFont-size;
+        }
+
+        height: 60px;
+    }
+
+    .mvList-content {
+        display: grid;
+        grid-template-columns: repeat(4, 250px);
+        justify-content: space-between;
+
+        .mvList-item {
+            margin-bottom: 40px;
+            color: $mainFont-color;
+
+            a:has(img) {
+                display: block;
+                position: relative;
+                width: 250px;
+                height: calc(9 * 250px / 16);
+                overflow: hidden;
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    transition: transform .75s ease-in-out;
+                }
+
+                &:hover img {
+                    transform: scale(1.2);
+                }
+
+                .mask {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: $subBackGround-color;
+                    opacity: 0;
+                    transition: opacity 1s ease-in-out;
+
+                    span {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%) scale(4);
+                        color: $subFont-color;
+                    }
+
+                    &:hover {
+                        opacity: 1;
+                    }
+                }
+            }
+
+            a {
+                cursor: pointer;
+                color: $mainFont-color;
+                margin-right: 10px;
+
+                &:hover {
+                    color: $activeBackGround-color;
+                }
+            }
+
+            div {
+                margin-top: 10px;
+                width: 90%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                span {
+                    margin-right: 10px;
+                }
+            }
+        }
+    }
+
+    margin-bottom: 100px;
+}

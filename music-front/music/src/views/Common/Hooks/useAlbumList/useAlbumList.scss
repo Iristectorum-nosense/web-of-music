@@ -1,6 +1,6 @@
-@import '../../Common/Styles/common.scss';
+@import '../../../Common/Styles/common.scss';
 
-.content {
+.album-content {
     .content-button {
         margin: 2%;
     }
@@ -12,7 +12,7 @@
 
         .content-list-header {
             display: grid;
-            grid-template-columns: 1fr 4fr 1.5fr 1fr;
+            grid-template-columns: 4fr 1fr 1.5fr 1fr;
             align-items: center;
             height: 80px;
             line-height: 1;
@@ -33,9 +33,9 @@
 
         .content-list-item {
             display: grid;
-            grid-template-columns: 1fr 4fr 1.5fr 1fr;
+            grid-template-columns: 4fr 1fr 1.5fr 1fr;
             align-items: center;
-            height: 100px;
+            height: 80px;
             line-height: 1;
             color: $mainFont-color;
 
@@ -73,8 +73,8 @@
                 }
 
                 a img {
-                    width: 80px;
-                    height: 80px;
+                    width: 60px;
+                    height: 60px;
                     vertical-align: middle;
                 }
 

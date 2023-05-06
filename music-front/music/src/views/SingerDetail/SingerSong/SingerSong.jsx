@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import '../SingerDefault/SingerDefault.scss';
-import SongListComponent from '../../Common/Hooks/useSongList';
+import SongListComponent from '../../Common/Hooks/useSongList/useSongList';
 import { getSingerSong } from '../../../api/song';
 import { message } from 'antd';
 

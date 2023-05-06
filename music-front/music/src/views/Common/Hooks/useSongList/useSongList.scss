@@ -1,0 +1,121 @@
+@import '../../../Common/Styles/common.scss';
+
+.content {
+    .content-button {
+        margin: 2%;
+    }
+
+    .content-list {
+        font-size: $subFont-size;
+        color: $subFont-color;
+        background-color: $mainBackGround-color;
+
+        .content-list-header {
+            display: grid;
+            grid-template-columns: 1fr 4fr 1.5fr 1fr;
+            align-items: center;
+            height: 80px;
+            line-height: 1;
+
+            li {
+                padding: 10px;
+                min-width: 50px;
+            }
+
+            li:first-child {
+                padding-left: 30px;
+            }
+        }
+
+        .content-list-item:nth-child(even) {
+            background-color: $activeFont-color;
+        }
+
+        .content-list-item {
+            display: grid;
+            grid-template-columns: 1fr 4fr 1.5fr 1fr;
+            align-items: center;
+            height: 100px;
+            line-height: 1;
+            color: $mainFont-color;
+
+            &:hover {
+                >span span {
+                    display: flex;
+                }
+            }
+
+            .content-list-item-index {
+                padding-left: 30px;
+                font-size: large;
+            }
+
+            >span {
+                display: flex;
+                align-items: center;
+                padding: 10px;
+                min-width: 50px;
+
+                a {
+                    margin-right: 20px;
+                    color: $mainFont-color;
+
+                    &:hover {
+                        color: $activeBackGround-color;
+                    }
+                }
+
+                a:not(:has(img)) {
+                    width: 100%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                a img {
+                    width: 80px;
+                    height: 80px;
+                    vertical-align: middle;
+                }
+
+                span {
+                    display: none;
+                    margin-left: 8px;
+                    font-size: 25px;
+                    color: $activeBackGround-color;
+                    cursor: pointer;
+                }
+            }
+        }
+
+        input {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+            border: 1px solid $subFont-color;
+            overflow: hidden;
+
+            &:hover {
+                border-color: $activeBackGround-color;
+            }
+
+            &:checked {
+                border-color: $activeBackGround-color;
+
+                &::before {
+                    content: '';
+                    display: block;
+                    position: relative;
+                    transform: rotate(40deg);
+                    transform-origin: top right;
+                    width: 14px;
+                    height: 14px;
+                    border: 1px solid $activeBackGround-color;
+                }
+            }
+        }
+    }
+}

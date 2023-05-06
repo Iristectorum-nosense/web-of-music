@@ -4,7 +4,7 @@ import Footer from '../Common/Footer/Footer';
 import './myMusic.scss';
 import axios from 'axios';
 import { Button } from 'antd';
-import PageComponent from '../Common/Hooks/usePagination';
+import PageComponent from '../Common/Hooks/usePagination/usePagination';
 
 
 export default function MyMusic() {

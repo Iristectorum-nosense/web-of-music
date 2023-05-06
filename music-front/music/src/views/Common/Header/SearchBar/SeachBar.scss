@@ -1,0 +1,137 @@
+@import '../../Styles/common.scss';
+
+.search {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+
+    input {
+        width: 300px;
+        min-width: 300px;
+        height: 40px;
+    }
+
+    button {
+        width: 40px;
+        height: 40px;
+    }
+
+    .history {
+        display: grid;
+        position: absolute;
+        top: calc(50% + 20px);
+        background-color: $activeFont-color;
+        width: 318px;
+        min-width: 318px;
+        border: 1px solid $subFont-color;
+        border-top-color: transparent;
+        color: $mainFont-color;
+        font-size: $subFont-size;
+        padding: 10px;
+        z-index: 11;
+
+        >div {
+            margin: 5px 0;
+        }
+
+        >div:first-child {
+            display: grid;
+            grid-template-columns: auto 20px;
+            align-items: center;
+
+            span:last-child {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: small;
+                cursor: pointer;
+
+                &:hover {
+                    color: $activeBackGround-color;
+                }
+            }
+        }
+
+        >div:not(:first-child) {
+            display: grid;
+            grid-template-columns: auto 20px;
+            align-items: center;
+
+            a {
+                color: $mainFont-color;
+                cursor: pointer;
+                width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            a span {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: small;
+
+                &:hover {
+                    color: $activeBackGround-color;
+                }
+            }
+        }
+    }
+
+    .relevant {
+        display: grid;
+        position: absolute;
+        top: calc(50% + 20px);
+        background-color: $activeFont-color;
+        width: 318px;
+        min-width: 318px;
+        border: 1px solid $subFont-color;
+        border-top-color: transparent;
+        color: $mainFont-color;
+        font-size: $subFont-size;
+        padding: 10px;
+        z-index: 10;
+
+        span {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: medium;
+            height: 40px;
+        }
+
+        .relevant-content {
+            display: grid;
+
+            >div:first-child {
+                text-align: left;
+                font-size: $mainFont-size;
+                color: $subFont-color;
+            }
+
+            >div {
+                margin: 5px 0;
+                width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                a {
+                    color: $mainFont-color;
+                    margin-right: 10px;
+                }
+
+                a:not(:first-child) {
+                    margin-left: 10px;
+                }
+            }
+        }
+    }
+
+    .hidden {
+        display: none;
+    }
+
+}

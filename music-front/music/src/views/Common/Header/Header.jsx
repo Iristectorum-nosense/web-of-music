@@ -4,11 +4,14 @@ import Login from './Login/Login';
 import Logout from './Logout/Logout';
 import cookie from 'react-cookies';
 import './Header.scss';
+import SearchBar from '../Header/SearchBar/SearchBar';
 
 
 export default function Header() {
 
     const token = cookie.load('jwtToken')
+
+    const Search = <SearchBar />
 
     return (
         <div className='header-wrapper'>
@@ -18,9 +21,8 @@ export default function Header() {
                 </Link>
                 <NavLink to='/' className='topNav-home topNav-items'>首页</NavLink>
                 <NavLink to='/myMusic' className='topNav-myMusic topNav-items'>我的音乐</NavLink>
-
                 <div className='topNav-search'>
-                    搜索
+                    {Search}
                 </div>
                 <div className='topNav-login'>
                     {

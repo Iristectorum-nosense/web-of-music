@@ -92,6 +92,39 @@ $middleFont-size: 25px;
     }
 }
 
+#root .search {
+    .ant-input {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-right-width: 0;
+        border-color: $subFont-color;
+        box-shadow: none;
+    }
+
+    .ant-input-affix-wrapper:hover,
+    .ant-input-affix-wrapper-focused,
+    .ant-input:hover,
+    .ant-input:focus {
+        border-color: $subFont-color;
+    }
+
+    .ant-btn {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-left-width: 0;
+        background-color: $activeFont-color;
+        border-color: $subFont-color;
+        color: $mainFont-color;
+        box-shadow: none;
+    }
+
+    .ant-btn:hover {
+        background-color: $activeFont-color;
+        color: $activeBackGround-color;
+        border-color: $subFont-color;
+    }
+}
+
 // modify antd style in modal
 .ant-modal-root {
 

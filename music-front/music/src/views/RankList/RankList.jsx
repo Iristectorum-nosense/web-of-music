@@ -3,7 +3,7 @@ import SubNav from '../Common/Header/SubNav/SubNav';
 import TagComponent from '../Common/Hooks/useTag';
 import { useLocation } from 'react-router-dom';
 import './RankList.scss';
-import SongListComponent from '../Common/Hooks/useSongList';
+import SongListComponent from '../Common/Hooks/useSongList/useSongList';
 import { getRankList } from '../../api/song';
 
 export default function TopList() {

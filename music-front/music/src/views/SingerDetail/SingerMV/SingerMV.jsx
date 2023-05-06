@@ -4,7 +4,7 @@ import '../SingerDefault/SingerDefault.scss';
 import { message } from 'antd';
 import { getSingerMV } from '../../../api/mv';
 import MVDisplay from '../SingerDefault/MVDisplay';
-import PageComponent from '../../Common/Hooks/usePagination';
+import PageComponent from '../../Common/Hooks/usePagination/usePagination';
 
 export default function SingerMV() {
 

@@ -3,6 +3,7 @@ import json
 import os
 import time
 import jwt
+from django.db.models import Q
 from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.utils import timezone
@@ -968,6 +969,137 @@ def get_home(request):
         return JsonResponse({'code': 200, 'home': homeObj})
 
     return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+def get_search_bar(request):
+    if request.method == 'GET':
+        info = request.GET.get('info', '')
+
+        def getSinger(obj):
+            resList = []
+            resObj = obj.singer_set.all()
+            for o in resObj:
+                res_dict = {
+                    'id': o.id,
+                    'name': o.name
+                }
+                resList.append(res_dict)
+            return resList
+
+        def getList(obj):
+            resList = []
+            for o in obj:
+                res_dict = {
+                    'id': o.id,
+                    'name': o.name,
+                    'singers': getSinger(o)
+                }
+                resList.append(res_dict)
+            return resList
+
+        songObj = Song.objects.all().filter(Q(name__icontains=info))[0:3]
+        songList = getList(songObj)
+
+        albumObj = Album.objects.all().filter(Q(name__icontains=info))[0:3]
+        albumList = getList(albumObj)
+
+        singerObj = Singer.objects.all().filter(Q(name__icontains=info))[0:3]
+        singerList = []
+        for singer in singerObj:
+            singer_dict = {
+                'id': singer.id,
+                'name': singer.name
+            }
+            singerList.append(singer_dict)
+
+        mvObj = MV.objects.all().filter(Q(name__icontains=info))[0:3]
+        mvList = getList(mvObj)
+
+        searchBar = {
+            'songList': songList,
+            'albumList': albumList,
+            'singerList': singerList,
+            'mvList': mvList
+        }
+
+        return JsonResponse({'code': 200, 'searchBar': searchBar})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+def get_search(request):
+    if request.method == 'GET':
+        type = int(request.GET.get('type', 1))
+        info = request.GET.get('info', '')
+
+        if type == 1:
+            songObj = Song.objects.all().filter(Q(name__icontains=info))[:10]
+            songList = []
+            for song in songObj:
+                singerObj = song.singer_set.all()
+                singerList = []
+                for singer in singerObj:
+                    singer_dict = {
+                        'id': singer.id,
+                        'name': singer.name
+                    }
+                    singerList.append(singer_dict)
+                song_dict = {
+                    'id': song.id,
+                    'name': song.name,
+                    'time': song.time,
+                    'singers': singerList
+                }
+                songList.append(song_dict)
+
+            return JsonResponse({'code': 200, 'search': songList})
+
+        if type == 2:
+            albumObj = Album.objects.all().filter(Q(name__icontains=info))[:10]
+            albumList = []
+            for album in albumObj:
+                singerObj = album.singer_set.all()
+                singerList = []
+                for singer in singerObj:
+                    singer_dict = {
+                        'id': singer.id,
+                        'name': singer.name
+                    }
+                    singerList.append(singer_dict)
+                album_dict = {
+                    'id': album.id,
+                    'url': album.url,
+                    'name': album.name,
+                    'publish': album.publish,
+                    'count': album.songs.count(),
+                    'singers': singerList
+                }
+                albumList.append(album_dict)
+            return JsonResponse({'code': 200, 'search': albumList})
+
+        if type == 3:
+            mvObj = MV.objects.all().filter(Q(name__icontains=info))[:16]
+            mvList = []
+            for mv in mvObj:
+                singerObj = mv.singer_set.all()
+                singerList = []
+                for singer in singerObj:
+                    singer_dict = {
+                        'id': singer.id,
+                        'name': singer.name
+                    }
+                    singerList.append(singer_dict)
+                mv_dict = {
+                    'id': mv.id,
+                    'url': mv.url,
+                    'name': mv.name,
+                    'singers': singerList
+                }
+                mvList.append(mv_dict)
+            return JsonResponse({'code': 200, 'search': mvList})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
 
 # @ensure_csrf_cookie
 # def check_jwt(request):

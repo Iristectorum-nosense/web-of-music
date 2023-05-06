@@ -7,7 +7,7 @@ import { message, Button } from 'antd';
 import { TeamOutlined, HeartOutlined } from '@ant-design/icons';
 import { useClickNavigate } from '../Common/Hooks/useClickNavigate';
 import { formatPublish } from '../../utils/format';
-import SongListComponent from '../Common/Hooks/useSongList';
+import SongListComponent from '../Common/Hooks/useSongList/useSongList';
 
 export default function AlbumDetail() {
 

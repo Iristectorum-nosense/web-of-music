@@ -20,6 +20,8 @@ urlpatterns = [
     path('albumInfo', views.get_album_info),
     path('songInfo', views.get_song_info),
     path('home', views.get_home),
+    path('searchBar', views.get_search_bar),
+    path('search', views.get_search),
 
     path('user/insert', views.insert),
 ]

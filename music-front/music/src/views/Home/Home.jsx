@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import SubNav from '../Common/Header/SubNav/SubNav';
 import { useLocation } from 'react-router-dom';
-import BannerComponent from '../Common/Hooks/useBanner';
+import BannerComponent from '../Common/Hooks/useBanner/useBanner';
 import { getHome } from '../../api/home';
 import './Home.scss';
 import HomeAlbumComponent from './HomeAlbum/HomeAlbum';

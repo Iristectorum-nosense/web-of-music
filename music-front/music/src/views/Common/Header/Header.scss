@@ -9,8 +9,6 @@ $top-font-size: 25px;
 .topNav-wrapper {
     display: flex;
     height: 100px;
-    line-height: 100px;
-    text-align: center;
     font-size: $top-font-size;
     border-bottom: 1px solid $subFont-color;
 
@@ -43,14 +41,24 @@ $top-font-size: 25px;
     }
 
     .topNav-myMusic {
-        flex: 2;
+        flex: 1.5;
     }
 
     .topNav-search {
-        flex: 2;
+        flex: 3;
     }
 
     .topNav-login {
         flex: 1;
+    }
+
+    .topNav-logo,
+    .topNav-home,
+    .topNav-myMusic,
+    .topNav-search,
+    .topNav-login {
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 }

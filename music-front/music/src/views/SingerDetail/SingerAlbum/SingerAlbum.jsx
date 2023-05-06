@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import '../SingerDefault/SingerDefault.scss';
 import { getSingerAlbum } from '../../../api/album';
 import { message } from 'antd';
-import PageComponent from '../../Common/Hooks/usePagination';
+import PageComponent from '../../Common/Hooks/usePagination/usePagination';
 import AlbumDisplay from '../SingerDefault/AlbumDisplay';
 
 export default function SingerAlbum() {
