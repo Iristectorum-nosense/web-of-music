@@ -19,6 +19,13 @@ const AlbumDetail = lazy(() => import('../views/AlbumDetail/AlbumDetail'));
 const SongDetail = lazy(() => import('../views/SongDetail/SongDetail'));
 const MVDetail = lazy(() => import('../views/MVDetail/MVDetail'));
 const MyMusic = lazy(() => import('../views/MyMusic/MyMusic'));
+const MyMusicLike = lazy(() => import('../views/MyMusicLike/MyMusicLike'));
+const LikeSong = lazy(() => import('../views/MyMusicLike/LikeSong/LikeSong'));
+const LikeAlbum = lazy(() => import('../views/MyMusicLike/LikeAlbum/LikeAlbum'));
+const LikeMV = lazy(() => import('../views/MyMusicLike/LikeMV/LikeMV'));
+const MyMusicCreate = lazy(() => import('../views/MyMusicCreate/MyMusicCreate'));
+const MyPlayDetail = lazy(() => import('../views/MyPlayDetail/MyPlayDetail'));
+
 const NotFound = lazy(() => import('../views/Common/NotFound/NotFound'));
 const NotServer = lazy(() => import('../views/Common/NotServer/NotServer'));
 
@@ -152,6 +159,54 @@ export const routes = [
         element: React.createElement(Suspense, {
             fallback: <Spin tip='Loading' size='large' style={{ margin: '20% 50%' }} />
         }, React.createElement(MyMusic)),
+        children: [
+            {
+                path: '',
+                element: React.createElement(MyMusicCreate),
+            },
+            {
+                path: 'like',
+                element: React.createElement(MyMusicLike),
+                children: [
+                    {
+                        path: '',
+                        element: React.createElement(LikeSong),
+                        meta: {
+                            auth: false
+                        }
+                    },
+                    {
+                        path: 'song',
+                        element: React.createElement(LikeSong),
+                        meta: {
+                            auth: false
+                        }
+                    },
+                    {
+                        path: 'album',
+                        element: React.createElement(LikeAlbum),
+                        meta: {
+                            auth: false
+                        }
+                    },
+                    {
+                        path: 'mv',
+                        element: React.createElement(LikeMV),
+                        meta: {
+                            auth: false
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'create',
+                element: React.createElement(MyMusicCreate),
+            },
+            {
+                path: 'myPlayDetail/:id',
+                element: React.createElement(MyPlayDetail),
+            },
+        ]
     },
     {
         path: '*',

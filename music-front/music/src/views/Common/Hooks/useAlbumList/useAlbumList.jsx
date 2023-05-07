@@ -1,24 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import cookie from 'react-cookies';
-import { PlusSquareOutlined, PlayCircleOutlined } from '@ant-design/icons';
+import { PlusSquareOutlined, PlayCircleOutlined, DeleteOutlined } from '@ant-design/icons';
 import PageComponent from '../usePagination/usePagination';
 import { formatPublish } from '../../../../utils/format';
 import './useAlbumList.scss';
 import { useLocation } from 'react-router-dom';
 import { useClickNavigate } from '../useClickNavigate';
+import { deleteLikeAlbum } from '../../../../api/user';
+import { useSelector } from 'react-redux';
+import { message } from 'antd';
 
-function useAlbumList(data) {
+function useAlbumList(setReload) {
 
+    const loginInfos = useSelector((state) => state.login.loginInfos)
 
-    return {};
+    const handleDeleteClick = (id) => {
+        let payload = {
+            userId: loginInfos.userId,
+            email: loginInfos.email,
+            albumId: id
+        }
+        deleteLikeAlbum(payload).then((res) => {
+            if (res.data.code === 200) {
+                message.success('删除成功')
+                setReload(true)
+            }
+            else if (res.data.code === 405) message.error(res.data.message)
+            else message.error('删除失败,请一会儿重试')
+        }).catch(() => { })
+    }
+
+    return { handleDeleteClick };
 }
 
 
-export default function AlbumListComponent({ haveImg = true, haveIndex = true, data = [], pageNum = 0 }) {
+export default function AlbumListComponent({ haveImg = true, haveDelete = true, haveIndex = true, data = [], pageNum = 0, setReload }) {
     //haveImg:是否显示专辑图片
     //haveIndex:是否需要分页
 
-    const { } = useAlbumList(data)
+    const { handleDeleteClick } = useAlbumList(setReload)
 
     const { handleSingerClick, handleAlbumClick } = useClickNavigate()
 
@@ -44,10 +64,12 @@ export default function AlbumListComponent({ haveImg = true, haveIndex = true, d
                                             : null
                                     }
                                     <a href='#' onClick={(e) => { e.preventDefault(); handleAlbumClick(album.id) }} >{album.name}</a>
-                                    <PlayCircleOutlined />
-                                    <PlusSquareOutlined />
+                                    <a><PlayCircleOutlined /></a>
+                                    {
+                                        haveDelete ? <a href='#' onClick={(e) => { e.preventDefault(); handleDeleteClick(album.id) }}><DeleteOutlined /></a> : null
+                                    }
                                 </span>
-                                <span style={{ justifySelf: 'center' }}>
+                                <span>
                                     {album.count}
                                 </span>
                                 <span>

@@ -7,6 +7,8 @@ import { Button, message } from 'antd';
 import { TeamOutlined, HeartOutlined, PlusSquareOutlined, CustomerServiceOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { useClickNavigate } from '../Common/Hooks/useClickNavigate';
 import { formatLyric, formatPublish } from '../../utils/format';
+import { useSelector } from 'react-redux';
+import { setLikeSong } from '../../api/user';
 
 export default function SongDetail() {
 
@@ -16,6 +18,7 @@ export default function SongDetail() {
     const [songInfo, setSongInfo] = useState([])
     const [lyric, setLyric] = useState('')
     const [showAllLyric, setShowAllLyric] = useState(false)
+    const loginInfos = useSelector((state) => state.login.loginInfos)
 
     useEffect(() => {
         getSongInfo(id).then((res) => {
@@ -38,6 +41,19 @@ export default function SongDetail() {
 
     const handleShowLyric = () => {
         setShowAllLyric(!showAllLyric)
+    }
+
+    const handleLikeClick = (id) => {
+        let payload = {
+            userId: loginInfos.userId,
+            email: loginInfos.email,
+            songId: id
+        }
+        setLikeSong(payload).then((res) => {
+            if (res.data.code === 200) message.success('收藏成功,请在我喜欢中查看')
+            else if (res.data.code === 405) message.error(res.data.message)
+            else message.error('收藏失败,请一会儿重试')
+        }).catch(() => { })
     }
 
     return (
@@ -78,7 +94,7 @@ export default function SongDetail() {
                                 <div>发行时间：{formatPublish(songInfo.publish)}</div>
                                 <div>
                                     <Button><CustomerServiceOutlined />播放</Button>
-                                    <Button><HeartOutlined />我喜欢</Button>
+                                    <Button onClick={() => { handleLikeClick(songInfo.id) }}><HeartOutlined />我喜欢</Button>
                                     <Button><PlusSquareOutlined />收藏</Button>
                                 </div>
                             </span>

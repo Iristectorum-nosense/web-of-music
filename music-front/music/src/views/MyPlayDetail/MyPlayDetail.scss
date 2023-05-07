@@ -1,0 +1,18 @@
+@import '../Common/Styles/common.scss';
+
+.myplay-info {
+    margin: 5% 0;
+
+    .myplay-info-button {
+        margin: 2%;
+    }
+
+    .content .content-list .content-list-item {
+        .content-list-item-index {
+            font-size: $subFont-size;
+        }
+
+        height: 60px;
+    }
+
+}

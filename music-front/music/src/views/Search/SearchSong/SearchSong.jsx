@@ -10,7 +10,6 @@ export default function SearchSong() {
     const { info } = useParams()
 
     useEffect(() => {
-        console.log(info)
         let payload = {
             type: 1,
             info: info

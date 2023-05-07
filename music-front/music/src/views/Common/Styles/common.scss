@@ -75,7 +75,10 @@ $middleFont-size: 25px;
     height: 500px;
 }
 
-#root .content-button {
+#root .content-button,
+.mymusic-create,
+.myplay-info,
+.favor-content {
 
     .ant-btn {
         margin-right: 2%;

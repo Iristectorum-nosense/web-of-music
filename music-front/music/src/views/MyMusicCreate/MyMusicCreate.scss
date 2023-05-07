@@ -1,19 +1,21 @@
-@import '../../../Common/Styles/common.scss';
+@import '../Common/Styles/common.scss';
 
-.album-content {
-    .content-button {
+.mymusic-create {
+    margin: 5% 0;
+
+    .mymusic-create-content-button {
         margin: 2%;
     }
 
-    .content-list {
+    .mymusic-create-content-list {
         font-size: $subFont-size;
         color: $subFont-color;
         background-color: $mainBackGround-color;
 
-        .content-list-header {
+        .mymusic-create-content-list-header {
             display: grid;
-            padding-left: 50px;
-            grid-template-columns: 4fr 1fr 1.5fr 1fr;
+            padding-left: 100px;
+            grid-template-columns: repeat(3, 1fr);
             align-items: center;
             height: 80px;
             line-height: 1;
@@ -24,16 +26,16 @@
             }
         }
 
-        .content-list-item:nth-child(even) {
+        .mymusic-create-content-list-item:nth-child(even) {
             background-color: $activeFont-color;
         }
 
-        .content-list-item {
+        .mymusic-create-content-list-item {
             display: grid;
-            padding-left: 50px;
-            grid-template-columns: 4fr 1fr 1.5fr 1fr;
+            padding-left: 100px;
+            grid-template-columns: repeat(3, 1fr);
             align-items: center;
-            height: 80px;
+            height: 100px;
             line-height: 1;
             color: $mainFont-color;
 
@@ -43,11 +45,6 @@
                 }
             }
 
-            .content-list-item-index {
-                padding-left: 30px;
-                font-size: large;
-            }
-
             >span {
                 display: flex;
                 align-items: center;
@@ -55,25 +52,16 @@
                 min-width: 50px;
 
                 a:not(:has(span)) {
+                    width: 100%;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                     margin-right: 20px;
                     color: $mainFont-color;
 
                     &:hover {
                         color: $activeBackGround-color;
                     }
-                }
-
-                a:not(:has(img)):not(:has(span)) {
-                    width: 100%;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
-
-                a img {
-                    width: 60px;
-                    height: 60px;
-                    vertical-align: middle;
                 }
 
                 span {

@@ -21,7 +21,7 @@ export default function SearchAlbum() {
         }).catch(() => { })
     }, [location])
 
-    const AlbumList = <AlbumListComponent haveIndex={false} data={searchInfo} />
+    const AlbumList = <AlbumListComponent haveDelete={false} haveIndex={false} data={searchInfo} />
 
     return (
         <div>

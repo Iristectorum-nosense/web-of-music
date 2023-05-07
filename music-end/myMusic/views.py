@@ -13,7 +13,7 @@ from django.core.mail import send_mail
 import datetime
 import random
 
-EXPIRES_TIME = 60 * 60
+EXPIRES_TIME = 60 * 60 * 24 * 7
 SECRET_KEY = 'myMusicEnd'
 
 
@@ -60,9 +60,7 @@ def login_by_password(request):
 
         remember = json_body.get('remember', False)
         response = JsonResponse({'code': 200, 'loginInfos': {
-            'userId': userObj.id, 'email': userObj.email,
-            'portrait': userObj.portrait.name, 'nickname': userObj.nickname,
-            'gender': userObj.gender
+            'userId': userObj.id, 'email': userObj.email, 'portrait': userObj.portrait, 'nickname': userObj.nickname, 'gender': userObj.gender
         }})
         if remember:
             data = str(userObj.id) + login_email
@@ -215,9 +213,7 @@ def login_by_captcha(request):
         userObj = User.objects.get(email=login_email)
         remember = json_body.get('remember', False)
         response = JsonResponse({'code': 200, 'loginInfos': {
-            'userId': userObj.id, 'email': userObj.email,
-            'portrait': userObj.portrait.name, 'nickname': userObj.nickname,
-            'gender': userObj.gender
+            'userId': userObj.id, 'email': userObj.email, 'portrait': userObj.portrait, 'nickname': userObj.nickname, 'gender': userObj.gender
         }})
         if remember:
             data = str(userObj.id) + login_email
@@ -277,9 +273,7 @@ def register(request):
 
         userObj = User.objects.get(email=register_email)
         response = JsonResponse({'code': 200, 'loginInfos': {
-            'userId': userObj.id, 'email': userObj.email,
-            'portrait': userObj.portrait.name, 'nickname': userObj.nickname,
-            'gender': userObj.gender
+            'userId': userObj.id, 'email': userObj.email, 'portrait': userObj.portrait, 'nickname': userObj.nickname, 'gender': userObj.gender
         }})
         data = str(userObj.id) + register_email
         jwtToken = createJWT(data)
@@ -1101,20 +1095,584 @@ def get_search(request):
     return JsonResponse({'code': 503, 'message': 'No method'})
 
 
-# @ensure_csrf_cookie
-# def check_jwt(request):
-#     if request.method == 'GET':
-#         get_token(request)
-#         return JsonResponse({'code': 200})
-#     if request.method == 'POST':
-#         token = request.META.get('HTTP_AUTHORIZATION','')
-#         payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-#         json_body = json.loads(request.body)
-#         id = str(json_body.get('userId', None))
-#         email = json_body.get('email', None)
-#         if id + email == payload.get('info'):
-#             return JsonResponse({'code': 200})
-#         return JsonResponse({'code': 405, 'message': '登录无效'})
+@csrf_exempt
+def set_like_song(request):
+    if request.method == 'POST':
+        json_body = json.loads(request.body)
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = json_body.get('userId', None)
+        user_email = json_body.get('email', None)
+        song_id = json_body.get('songId', None)
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        if User.objects.filter(id=user_id, songs__id=song_id).exists():
+            return JsonResponse({'code': 405, 'message': '已存在'})
+
+        userObj = User.objects.get(id=user_id, email=user_email)
+        song = Song.objects.get(id=song_id)
+        userObj.songs.add(song)
+        userObj.song_num += 1
+        userObj.save()
+
+        return JsonResponse({'code': 200})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+def get_like_song(request):
+    if request.method == 'GET':
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = int(request.GET.get('userId', -1))
+        user_email = request.GET.get('email', None)
+        index = int(request.GET.get('index', 1))
+        limit = 10
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        userObj = User.objects.get(id=user_id, email=user_email)
+
+        songObj = userObj.songs.all()[(index - 1) * limit: index * limit]
+        songList = []
+        for song in songObj:
+            singerObj = song.singer_set.all()
+            singerList = []
+            for singer in singerObj:
+                singer_dict = {
+                    'id': singer.id,
+                    'name': singer.name
+                }
+                singerList.append(singer_dict)
+            song_dict = {
+                'id': song.id,
+                'name': song.name,
+                'time': song.time,
+                'singers': singerList
+            }
+            songList.append(song_dict)
+
+        like_song = {
+            'songs': songList,
+            'count': userObj.song_num
+        }
+
+        return JsonResponse({'code': 200, 'likeSong': like_song})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+@csrf_exempt
+def delete_like_song(request):
+    if request.method == 'POST':
+        json_body = json.loads(request.body)
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = json_body.get('userId', None)
+        user_email = json_body.get('email', None)
+        song_id = json_body.get('songId', None)
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        if not User.objects.filter(id=user_id, songs__id=song_id).exists():
+            return JsonResponse({'code': 405, 'message': '不存在'})
+
+        userObj = User.objects.get(id=user_id, email=user_email)
+        song = Song.objects.get(id=song_id)
+        userObj.songs.remove(song)
+        userObj.song_num -= 1
+        userObj.save()
+
+        return JsonResponse({'code': 200})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+@csrf_exempt
+def set_like_album(request):
+    if request.method == 'POST':
+        json_body = json.loads(request.body)
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = json_body.get('userId', None)
+        user_email = json_body.get('email', None)
+        album_id = json_body.get('albumId', None)
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        if User.objects.filter(id=user_id, albums__id=album_id).exists():
+            return JsonResponse({'code': 405, 'message': '已存在'})
+
+        userObj = User.objects.get(id=user_id, email=user_email)
+        album = Album.objects.get(id=album_id)
+        userObj.albums.add(album)
+        userObj.album_num += 1
+        userObj.save()
+
+        return JsonResponse({'code': 200})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+def get_like_album(request):
+    if request.method == 'GET':
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = int(request.GET.get('userId', -1))
+        user_email = request.GET.get('email', None)
+        index = int(request.GET.get('index', 1))
+        limit = 10
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        userObj = User.objects.get(id=user_id, email=user_email)
+
+        albumObj = userObj.albums.all()[(index - 1) * limit: index * limit]
+        albumList = []
+        for album in albumObj:
+            singerObj = album.singer_set.all()
+            singerList = []
+            for singer in singerObj:
+                singer_dict = {
+                    'id': singer.id,
+                    'name': singer.name
+                }
+                singerList.append(singer_dict)
+            album_dict = {
+                'id': album.id,
+                'url': album.url,
+                'name': album.name,
+                'publish': album.publish,
+                'count': album.songs.count(),
+                'singers': singerList
+            }
+            albumList.append(album_dict)
+
+        like_album = {
+            'albums': albumList,
+            'count': userObj.album_num
+        }
+
+        return JsonResponse({'code': 200, 'likeAlbum': like_album})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+@csrf_exempt
+def delete_like_album(request):
+    if request.method == 'POST':
+        json_body = json.loads(request.body)
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = json_body.get('userId', None)
+        user_email = json_body.get('email', None)
+        album_id = json_body.get('albumId', None)
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        if not User.objects.filter(id=user_id, albums__id=album_id).exists():
+            return JsonResponse({'code': 405, 'message': '不存在'})
+
+        userObj = User.objects.get(id=user_id, email=user_email)
+        album = Album.objects.get(id=album_id)
+        userObj.albums.remove(album)
+        userObj.album_num -= 1
+        userObj.save()
+
+        return JsonResponse({'code': 200})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+@csrf_exempt
+def set_like_mv(request):
+    if request.method == 'POST':
+        json_body = json.loads(request.body)
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = json_body.get('userId', None)
+        user_email = json_body.get('email', None)
+        mv_id = json_body.get('mvId', None)
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        if User.objects.filter(id=user_id, mvs__id=mv_id).exists():
+            return JsonResponse({'code': 405, 'message': '已存在'})
+
+        userObj = User.objects.get(id=user_id, email=user_email)
+        mv = MV.objects.get(id=mv_id)
+        userObj.mvs.add(mv)
+        userObj.mv_num += 1
+        userObj.save()
+
+        return JsonResponse({'code': 200})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+def get_like_mv(request):
+    if request.method == 'GET':
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = int(request.GET.get('userId', -1))
+        user_email = request.GET.get('email', None)
+        index = int(request.GET.get('index', 1))
+        limit = 12
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        userObj = User.objects.get(id=user_id, email=user_email)
+
+        mvObj = userObj.mvs.all()[(index - 1) * limit: index * limit]
+        mvList = []
+        for mv in mvObj:
+            singerObj = mv.singer_set.all()
+            singerList = []
+            for singer in singerObj:
+                singer_dict = {
+                    'id': singer.id,
+                    'name': singer.name
+                }
+                singerList.append(singer_dict)
+            mv_dict = {
+                'id': mv.id,
+                'url': mv.url,
+                'name': mv.name,
+                'singers': singerList
+            }
+            mvList.append(mv_dict)
+
+        like_mv = {
+            'mvs': mvList,
+            'count': userObj.mv_num
+        }
+
+        return JsonResponse({'code': 200, 'likeMV': like_mv})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+@csrf_exempt
+def delete_like_mv(request):
+    if request.method == 'POST':
+        json_body = json.loads(request.body)
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = json_body.get('userId', None)
+        user_email = json_body.get('email', None)
+        mv_id = json_body.get('mvId', None)
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        if not User.objects.filter(id=user_id, mvs__id=mv_id).exists():
+            return JsonResponse({'code': 405, 'message': '不存在'})
+
+        userObj = User.objects.get(id=user_id, email=user_email)
+        mv = MV.objects.get(id=mv_id)
+        userObj.mvs.remove(mv)
+        userObj.mv_num -= 1
+        userObj.save()
+
+        return JsonResponse({'code': 200})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+def get_my_play(request):
+    if request.method == 'GET':
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = int(request.GET.get('userId', -1))
+        user_email = request.GET.get('email', None)
+        index = int(request.GET.get('index', 1))
+        limit = 10
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        userObj = User.objects.get(id=user_id, email=user_email)
+
+        playObj = userObj.plays.all().order_by('-publish')[(index - 1) * limit: index * limit]
+        playList = []
+        for play in playObj:
+            play_dict = {
+                'id': play.id,
+                'name': play.name,
+                'publish': play.publish,
+                'count': play.songs.count()
+            }
+            playList.append(play_dict)
+
+        my_play = {
+            'plays': playList,
+            'count': userObj.plays.count()
+        }
+
+        return JsonResponse({'code': 200, 'myPlay': my_play})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+@csrf_exempt
+def create_my_play(request):
+    if request.method == 'POST':
+        json_body = json.loads(request.body)
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = json_body.get('userId', None)
+        user_email = json_body.get('email', None)
+        play_name = json_body.get('playName', None)
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        userObj = User.objects.get(id=user_id, email=user_email)
+        userPlayObj = UserPlay(name=play_name, publish=datetime.datetime.now())
+        userPlayObj.save()
+        userObj.plays.add(userPlayObj)
+        userObj.save()
+
+        return JsonResponse({'code': 200})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+def get_my_play_info(request):
+    if request.method == 'GET':
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = int(request.GET.get('userId', -1))
+        user_email = request.GET.get('email', None)
+        play_id = int(request.GET.get('playId', 1))
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        userPlayObj = UserPlay.objects.filter(id=play_id)
+
+        if userPlayObj.exists():
+            userPlay = UserPlay.objects.get(id=play_id)
+
+            songObj = userPlay.songs.all()
+            songList = []
+            for song in songObj:
+                song_singerObj = song.singer_set.all()
+                song_singerList = []
+                for singer in song_singerObj:
+                    singer_dict = {
+                        'id': singer.id,
+                        'name': singer.name
+                    }
+                    song_singerList.append(singer_dict)
+                song_dict = {
+                    'id': song.id,
+                    'name': song.name,
+                    'time': song.time,
+                    'singers': song_singerList
+                }
+                songList.append(song_dict)
+
+            return JsonResponse({'code': 200, 'myPlayInfo': songList})
+        else:
+            return JsonResponse({'code': 405, 'message': '没有该信息'})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+@csrf_exempt
+def edit_my_play(request):
+    if request.method == 'POST':
+        json_body = json.loads(request.body)
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = json_body.get('userId', None)
+        user_email = json_body.get('email', None)
+        play_id = json_body.get('playId', None)
+        play_name = json_body.get('playName', None)
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        if not User.objects.filter(id=user_id, plays__id=play_id).exists():
+            return JsonResponse({'code': 405, 'message': '不存在'})
+
+        if play_name is not None:
+            userPlay = UserPlay.objects.get(id=play_id)
+            userPlay.name = play_name
+            userPlay.save()
+
+        return JsonResponse({'code': 200})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+def get_my_play_list(request):
+    if request.method == 'GET':
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = int(request.GET.get('userId', -1))
+        user_email = request.GET.get('email', None)
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        userObj = User.objects.get(id=user_id, email=user_email)
+        userPlayObj = userObj.plays.all().order_by('-publish')
+        userPlayList = []
+        for userPlay in userPlayObj:
+            userPlay_dict = {
+                'id': userPlay.id,
+                'name': userPlay.name,
+                'count': userPlay.songs.count()
+            }
+            userPlayList.append(userPlay_dict)
+
+        return JsonResponse({'code': 200, 'myPlayList': userPlayList})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+@csrf_exempt
+def set_play_song(request):
+    if request.method == 'POST':
+        json_body = json.loads(request.body)
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = json_body.get('userId', None)
+        user_email = json_body.get('email', None)
+        songId_list = json_body.get('songIdList', [])
+        play_id = json_body.get('playId', None)
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        if not User.objects.filter(id=user_id, plays__id=play_id).exists():
+            return JsonResponse({'code': 405, 'message': '不存在'})
+
+        if len(songId_list) == 0:
+            return JsonResponse({'code': 405, 'message': '未选中'})
+
+        userPlay = UserPlay.objects.get(id=play_id)
+
+        for songId in songId_list:
+            if Song.objects.filter(id=songId).exists() and not userPlay.songs.filter(id=songId).exists():
+                songObj = Song.objects.get(id=songId)
+                userPlay.songs.add(songObj)
+                userPlay.save()
+
+        return JsonResponse({'code': 200})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+@csrf_exempt
+def delete_play_song(request):
+    if request.method == 'POST':
+        json_body = json.loads(request.body)
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = json_body.get('userId', None)
+        user_email = json_body.get('email', None)
+        song_id = json_body.get('songId', None)
+        play_id = json_body.get('playId', None)
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        if not User.objects.filter(id=user_id, plays__id=play_id).exists() and Song.objects.filter(id=song_id).exists():
+            return JsonResponse({'code': 405, 'message': '不存在'})
+
+        userPlay = UserPlay.objects.get(id=play_id)
+        song = Song.objects.get(id=song_id)
+        userPlay.songs.remove(song)
+        userPlay.save()
+
+        return JsonResponse({'code': 200})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+@csrf_exempt
+def delete_my_play(request):
+    if request.method == 'POST':
+        json_body = json.loads(request.body)
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = json_body.get('userId', None)
+        user_email = json_body.get('email', None)
+        play_id = json_body.get('playId', None)
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        if not User.objects.filter(id=user_id, plays__id=play_id).exists():
+            return JsonResponse({'code': 405, 'message': '不存在'})
+
+        userPlay = UserPlay.objects.get(id=play_id)
+        userPlay.songs.clear()
+        userPlay.save()
+
+        userObj = User.objects.get(id=user_id, email=user_email)
+        userObj.plays.remove(userPlay)
+        userObj.save()
+
+        return JsonResponse({'code': 200})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+
+
+
+
+
+
+
+
 
 def insert(request):
     # -----------------------singer-tag
@@ -1491,6 +2049,6 @@ def insert(request):
     #     elif i in (22, 23, 24):
     #         singer = Singer.objects.get(id=41)
     #         singer.albums.add(album)
-    
+
     print('done')
     return JsonResponse({'code': 200})
