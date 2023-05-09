@@ -10,13 +10,25 @@ const searchSlice = createSlice({
             state.searchInfos = []
         },
         addSearchInfo(state, action) {
-            const newSearchInfos = [action.payload, ...state.searchInfos.filter((searchItem) =>
-                searchItem.id !== action.payload.id && searchItem.type !== action.payload.type && searchItem.info !== action.payload.info)]
+            let newSearchInfos
+            if (action.payload.type) {
+                newSearchInfos = [action.payload, ...state.searchInfos.filter((searchItem) =>
+                    searchItem.id !== action.payload.id || searchItem.type !== action.payload.type)]
+            } else {
+                newSearchInfos = [action.payload, ...state.searchInfos.filter((searchItem) =>
+                    searchItem.info !== action.payload.info)]
+            }
             state.searchInfos = newSearchInfos
         },
         clearSeachInfo(state, action) {
-            const newSearchInfos = [...state.searchInfos.filter((searchItem) =>
-                searchItem.id !== action.payload.id && searchItem.type !== action.payload.type && searchItem.info !== action.payload.info)]
+            let newSearchInfos
+            if (action.payload.type) {
+                newSearchInfos = [...state.searchInfos.filter((searchItem) =>
+                    searchItem.id !== action.payload.id || searchItem.type !== action.payload.type)]
+            } else {
+                newSearchInfos = [...state.searchInfos.filter((searchItem) =>
+                    searchItem.info !== action.payload.info)]
+            }
             state.searchInfos = newSearchInfos
         }
     }

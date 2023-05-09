@@ -19,6 +19,7 @@ export default function Login() {
         if (ev.key === 'logout') {
             cookie.remove('jwtToken', {})
             dispatch(clearUserInfo())
+            navigate('/')
             window.location.reload(true)
         }
     }
