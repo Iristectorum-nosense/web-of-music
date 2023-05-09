@@ -17,7 +17,7 @@ export default function Login() {
             navigate('/mySetting')
         }
         if (ev.key === 'logout') {
-            cookie.remove('jwtToken')
+            cookie.remove('jwtToken', {})
             dispatch(clearUserInfo())
             window.location.reload(true)
         }

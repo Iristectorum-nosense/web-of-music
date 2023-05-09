@@ -1,6 +1,6 @@
 //节流，立即触发
 export function throttleNow(fuc, wait) {
-    var prev = 0
+    var prev = 0;
     return function () {
         let context = this
         let args = arguments

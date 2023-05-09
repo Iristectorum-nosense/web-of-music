@@ -27,7 +27,6 @@ const MyMusicCreate = lazy(() => import('../views/MyMusicCreate/MyMusicCreate'))
 const MyPlayDetail = lazy(() => import('../views/MyPlayDetail/MyPlayDetail'));
 
 const NotFound = lazy(() => import('../views/Common/NotFound/NotFound'));
-const NotServer = lazy(() => import('../views/Common/NotServer/NotServer'));
 
 
 export const routes = [
@@ -134,13 +133,6 @@ export const routes = [
             {
                 path: 'mvDetail/:id',
                 element: React.createElement(MVDetail),
-                meta: {
-                    auth: false
-                },
-            },
-            {
-                path: 'notServer',
-                element: React.createElement(NotServer),
                 meta: {
                     auth: false
                 },

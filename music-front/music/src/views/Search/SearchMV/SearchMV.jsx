@@ -3,6 +3,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import { getSearch } from '../../../api/search';
 import { useClickNavigate } from '../../Common/Hooks/useClickNavigate';
 import { PlayCircleOutlined } from '@ant-design/icons';
+import { MVImgURL } from '../../../utils/staticURL';
 
 export default function SearchAlbum() {
 
@@ -33,7 +34,7 @@ export default function SearchAlbum() {
                             searchInfo.map((mv) => (
                                 <div key={mv.id} className='mvList-item'>
                                     <a href='#' onClick={(e) => { e.preventDefault(); handleMVClick(mv.id) }} >
-                                        <img src={`http://localhost:8000${mv.url}/mask/${mv.id}.png`} alt={mv.name} loading='lazy' />
+                                        <img src={MVImgURL(mv.url, mv.id)} alt={mv.name} loading='lazy' />
                                         <span className='mask'><PlayCircleOutlined /></span>
                                     </a>
                                     <div>

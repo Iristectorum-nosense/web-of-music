@@ -13,7 +13,7 @@ export function debounceNow(fuc, wait) {
     }
 }
 
-//节流，延迟触发
+//防抖，延迟触发
 export function debounceDelay(fuc, wait) {
     let timeout
     return function () {

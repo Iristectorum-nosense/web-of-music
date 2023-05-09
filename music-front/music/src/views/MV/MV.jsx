@@ -9,6 +9,7 @@ import { formatPublish } from '../../utils/format';
 import { VideoCameraOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { Space } from 'antd';
 import { useClickNavigate } from '../Common/Hooks/useClickNavigate';
+import { MVImgURL } from '../../utils/staticURL';
 
 export default function MV() {
     const tagDefs = [
@@ -112,7 +113,7 @@ export default function MV() {
                     mvList.map((mv) => (
                         <div key={mv.id} className='mv-content-item'>
                             <a href='#' className='mv-content-item-img' onClick={(e) => { e.preventDefault(); handleMVClick(mv.id) }}>
-                                <img src={`http://localhost:8000${mv.url}/mask/${mv.id}.png`} alt={mv.name} loading='lazy' />
+                                <img src={MVImgURL(mv.url, mv.id)} alt={mv.name} loading='lazy' />
                                 <span className='mask'><PlayCircleOutlined /></span>
                             </a>
                             <a href='#' className='mv-content-item-font' onClick={(e) => { e.preventDefault(); handleMVClick(mv.id) }}>{mv.name}</a>

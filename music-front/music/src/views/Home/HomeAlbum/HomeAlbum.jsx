@@ -1,6 +1,7 @@
 import React from 'react';
 import './HomeAlbum.scss';
 import { useClickNavigate } from '../../Common/Hooks/useClickNavigate';
+import { AlbumImgURL } from '../../../utils/staticURL';
 
 export default function HomeAlbumComponent({ data = [], index = 1 }) {
 
@@ -13,7 +14,7 @@ export default function HomeAlbumComponent({ data = [], index = 1 }) {
                 showData.map((album) => (
                     <div key={album.id} className='home-album-item'>
                         <a href='#' onClick={(e) => { e.preventDefault(); handleAlbumClick(album.id) }} >
-                            <img src={`http://localhost:8000${album.url}/${album.id}.png`} alt={album.name} loading='lazy' />
+                            <img src={AlbumImgURL(album.url, album.id)} alt={album.name} loading='lazy' />
                         </a>
                         <div>
                             <a href='#' onClick={(e) => { e.preventDefault(); handleAlbumClick(album.id) }}>{album.name}</a>

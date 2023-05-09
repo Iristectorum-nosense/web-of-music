@@ -195,3 +195,22 @@ export const deletePlay = (data) => {
     });
 }
 
+//修改播放队列歌曲喜欢信息
+export const modifyLikeSong = (data) => {
+    const url = `play/likeSong`;
+    return instance.post(url, {
+        userId: data.userId,
+        email: data.email,
+        playId: data.playId
+    });
+}
+
+//登录/注册后自动推送修改播放队列喜欢信息
+export const modifyLikeSongList = (data) => {
+    const url = `play/likeSongList`;
+    return instance.post(url, {
+        userId: data.userId,
+        email: data.email,
+        playList: data.playList
+    });
+}

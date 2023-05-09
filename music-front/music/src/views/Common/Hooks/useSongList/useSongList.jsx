@@ -7,8 +7,11 @@ import { formatTime } from '../../../../utils/format';
 import './useSongList.scss';
 import { useLocation } from 'react-router-dom';
 import { useClickNavigate } from '../useClickNavigate';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createPlay, deleteLikeSong, deletePlaySong, getPlayList, setPlaySong } from '../../../../api/user';
+import { getPlayListInfo } from '../../../../api/song';
+import { addPlaySong, setPlayIndex } from '../../../../store/slices/user';
+import { SongImgURL } from '../../../../utils/staticURL';
 
 function useSongList(data, setReload, playSongId) {
     const [bulk, setBulk] = useState(false)
@@ -30,6 +33,8 @@ function useSongList(data, setReload, playSongId) {
     const [myPlayVisble, setMyPlayVisble] = useState(false)
 
     const loginInfos = useSelector((state) => state.login.loginInfos)
+    const playInfoList = useSelector((state) => state.user.playList)
+    const dispatch = useDispatch()
 
     const namePattern = /^[a-zA-Z0-9_\u4e00-\u9fa5]{2,18}$/g
 
@@ -49,25 +54,105 @@ function useSongList(data, setReload, playSongId) {
         setOptionAll(allChecked)
     }, [options])
 
-    useEffect(() => {
-        let payload = {
-            userId: loginInfos.userId,
-            email: loginInfos.email
-        }
-        getPlayList(payload).then((res) => {
-            if (res.data.code === 200) setPlayList(res.data.myPlayList)
-        }).catch(() => { })
+    const token = cookie.load('jwtToken')
 
-        return () => {
-            setMyPlayReload(false)
+    useEffect(() => {
+        if (token) {
+            let payload = {
+                userId: loginInfos.userId,
+                email: loginInfos.email
+            }
+            getPlayList(payload).then((res) => {
+                if (res.data.code === 200) setPlayList(res.data.myPlayList)
+            }).catch(() => { })
+
+            return () => {
+                setMyPlayReload(false)
+            }
         }
     }, [location, myPlayReload])
 
-    const handlePlayClick = (ev) => {
-        console.log(ev)
+    const handlePlayClick = () => {
+        const playIdList = []
+        options.map((option) => {
+            if (option.option === true) playIdList.push(option.id)
+        })
+
+        const newPlayIdList = playIdList.filter(id => !playInfoList.some(playInfo => playInfo.id === id))
+
+        if (newPlayIdList.length === 0) {
+            if (playIdList.length !== 0) dispatch(setPlayIndex(playInfoList.findIndex(playInfo => playInfo.id === playIdList[0])))
+        } else {
+            let payload = {
+                userId: loginInfos.userId,
+                email: loginInfos.email,
+                playIdList: newPlayIdList
+            }
+            getPlayListInfo(payload).then((res) => {
+                if (res.data.code === 200) {
+                    message.success('添加成功')
+                    dispatch(addPlaySong(res.data.playInfoList))
+                } else if (res.data.code === 405) message.error(res.data.message)
+            }).catch(() => { })
+        }
+
+        setOptionAll(false)
+        setOptions((prevOptions) =>
+            prevOptions.map((option) => {
+                return { ...option, option: false }
+            })
+        )
+        setMyPlayVisble(false)
+        setBulk(false)
     }
 
-    const handleFavorClick = (ev) => {
+    const handleAllPlayClick = () => {
+        const playIdList = []
+        options.map((option) => { playIdList.push(option.id) })
+
+        const newPlayIdList = playIdList.filter(id => !playInfoList.some(playInfo => playInfo.id === id))
+
+        if (newPlayIdList.length === 0) {
+            if (playIdList.length !== 0) dispatch(setPlayIndex(playInfoList.findIndex(playInfo => playInfo.id === playIdList[0])))
+        } else {
+            let payload = {
+                userId: loginInfos.userId,
+                email: loginInfos.email,
+                playIdList: newPlayIdList
+            }
+            getPlayListInfo(payload).then((res) => {
+                if (res.data.code === 200) {
+                    message.success('添加成功')
+                    dispatch(addPlaySong(res.data.playInfoList))
+                } else if (res.data.code === 405) message.error(res.data.message)
+            }).catch(() => { })
+        }
+    }
+
+    const handleOnePlayClick = (id) => {
+        const playIdList = []
+        playIdList.push(id)
+
+        const newPlayIdList = playIdList.filter(id => !playInfoList.some(playInfo => playInfo.id === id))
+        if (newPlayIdList.length === 0) {
+            if (playIdList.length !== 0) dispatch(setPlayIndex(playInfoList.findIndex(playInfo => playInfo.id === playIdList[0])))
+        } else {
+            let payload = {
+                userId: loginInfos.userId,
+                email: loginInfos.email,
+                playIdList: newPlayIdList
+            }
+            console.log(newPlayIdList)
+            getPlayListInfo(payload).then((res) => {
+                if (res.data.code === 200) {
+                    message.success('添加成功')
+                    dispatch(addPlaySong(res.data.playInfoList))
+                } else if (res.data.code === 405) message.error(res.data.message)
+            }).catch(() => { })
+        }
+    }
+
+    const handleFavorClick = () => {
         setMyPlayVisble(true)
     }
 
@@ -240,7 +325,8 @@ function useSongList(data, setReload, playSongId) {
 
     return {
         bulk, optionAll, options, pageIndex, playList, visible, loading, myPlayVisble,
-        handlePlayClick, handleFavorClick, handleBulkClick, handleOptionChange, handleOptionAll, handleDeleteClick, handleCloseClcik, handleOneFavorClick, handleFavorPlay,
+        handlePlayClick, handleAllPlayClick, handleOnePlayClick, handleFavorClick, handleBulkClick,
+        handleOptionChange, handleOptionAll, handleDeleteClick, handleCloseClcik, handleOneFavorClick, handleFavorPlay,
         handleCreateClick, modalCreate, handleCreate
     };
 }
@@ -253,7 +339,8 @@ export default function SongListComponent({ haveOption = true, haveImg = true, h
     //haveIndex:是否需要分页
 
     const { bulk, optionAll, options, pageIndex, playList, visible, loading, myPlayVisble,
-        handlePlayClick, handleFavorClick, handleBulkClick, handleOptionChange, handleOptionAll, handleDeleteClick, handleCloseClcik, handleOneFavorClick, handleFavorPlay,
+        handlePlayClick, handleAllPlayClick, handleOnePlayClick, handleFavorClick, handleBulkClick,
+        handleOptionChange, handleOptionAll, handleDeleteClick, handleCloseClcik, handleOneFavorClick, handleFavorPlay,
         handleCreateClick, modalCreate, handleCreate
     } = useSongList(data, setReload, playSongId)
 
@@ -268,7 +355,11 @@ export default function SongListComponent({ haveOption = true, haveImg = true, h
                 {
                     haveOption ? (
                         <div className='content-button'>
-                            <Button><CustomerServiceOutlined />播放全部</Button>
+                            {
+                                bulk
+                                    ? <Button onClick={handlePlayClick}><CustomerServiceOutlined />播放</Button>
+                                    : <Button onClick={handleAllPlayClick}><CustomerServiceOutlined />播放全部</Button>
+                            }
                             {
                                 token && bulk ? <Button onClick={handleFavorClick}><FolderAddOutlined />收藏</Button> : null
                             }
@@ -308,11 +399,11 @@ export default function SongListComponent({ haveOption = true, haveImg = true, h
                                     <span>
                                         {
                                             haveImg
-                                                ? <a href='#' onClick={(e) => { e.preventDefault(); handleSongClick(song.id) }} ><img src={`http://localhost:8000${song.url}/${song.id}.png`} alt={song.name} loading='lazy' /></a>
+                                                ? <a href='#' onClick={(e) => { e.preventDefault(); handleSongClick(song.id) }} ><img src={SongImgURL(song.url, song.id)} alt={song.name} loading='lazy' /></a>
                                                 : null
                                         }
                                         <a href='#' onClick={(e) => { e.preventDefault(); handleSongClick(song.id) }} >{song.name}</a>
-                                        <a><PlayCircleOutlined /></a>
+                                        <a href='#' onClick={(e) => { e.preventDefault(); handleOnePlayClick(song.id) }}><PlayCircleOutlined /></a>
                                         {
                                             token && !bulk ? <a href='#' onClick={(e) => { e.preventDefault(); handleOneFavorClick(song.id) }}><PlusSquareOutlined /></a> : null
                                         }

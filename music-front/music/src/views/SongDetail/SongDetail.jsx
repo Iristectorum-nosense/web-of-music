@@ -2,23 +2,31 @@ import React, { useEffect, useState } from 'react';
 import SubNav from '../Common/Header/SubNav/SubNav';
 import './SongDetail.scss';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { getLyric, getSongInfo } from '../../api/song';
+import { getLyric, getPlayListInfo, getSongInfo } from '../../api/song';
 import { Button, message } from 'antd';
-import { TeamOutlined, HeartOutlined, PlusSquareOutlined, CustomerServiceOutlined, PlayCircleOutlined } from '@ant-design/icons';
+import { TeamOutlined, HeartOutlined, CustomerServiceOutlined, PlayCircleOutlined } from '@ant-design/icons';
 import { useClickNavigate } from '../Common/Hooks/useClickNavigate';
 import { formatLyric, formatPublish } from '../../utils/format';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setLikeSong } from '../../api/user';
+import cookie from 'react-cookies';
+import { addPlaySong, setPlayIndex } from '../../store/slices/user';
+import { MVImgURL, SongImgURL, SongLyricURL } from '../../utils/staticURL';
 
 export default function SongDetail() {
 
     const { id } = useParams()
     const location = useLocation()
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+
     const [songInfo, setSongInfo] = useState([])
     const [lyric, setLyric] = useState('')
     const [showAllLyric, setShowAllLyric] = useState(false)
     const loginInfos = useSelector((state) => state.login.loginInfos)
+    const playInfoList = useSelector((state) => state.user.playList)
+
+    const token = cookie.load('jwtToken')
 
     useEffect(() => {
         getSongInfo(id).then((res) => {
@@ -30,7 +38,7 @@ export default function SongDetail() {
                 setSongInfo(res.data.songInfo)
             }
         }).catch(() => { })
-        getLyric(`http://localhost:8000/media/song/${id}.txt`).then((res) => {
+        getLyric(SongLyricURL(id)).then((res) => {
             if (res.status === 200) {
                 setLyric(res.data)
             }
@@ -56,6 +64,28 @@ export default function SongDetail() {
         }).catch(() => { })
     }
 
+    const handlePlayClick = (id) => {
+        const playIdList = []
+        playIdList.push(id)
+
+        const newPlayIdList = playIdList.filter(id => !playInfoList.some(playInfo => playInfo.id === id))
+        if (newPlayIdList.length === 0) {
+            if (playIdList.length !== 0) dispatch(setPlayIndex(playInfoList.findIndex(playInfo => playInfo.id === playIdList[0])))
+        } else {
+            let payload = {
+                userId: loginInfos.userId,
+                email: loginInfos.email,
+                playIdList: newPlayIdList
+            }
+            getPlayListInfo(payload).then((res) => {
+                if (res.data.code === 200) {
+                    message.success('添加成功')
+                    dispatch(addPlaySong(res.data.playInfoList))
+                } else if (res.data.code === 405) message.error(res.data.message)
+            }).catch(() => { })
+        }
+    }
+
     return (
         <div className='header-wrapper'>
             <SubNav></SubNav>
@@ -64,7 +94,7 @@ export default function SongDetail() {
                     ? <>
                         <div className='song-info'>
                             <a href='#' onClick={(e) => { e.preventDefault(e) }} >
-                                <img src={`http://localhost:8000${songInfo.url}/${songInfo.id}.png`} alt={songInfo.name} loading='lazy' />
+                                <img src={SongImgURL(songInfo.url, songInfo.id)} alt={songInfo.name} loading='lazy' />
                             </a>
                             <span className='song-info-detail'>
                                 <div>{songInfo.name}</div>
@@ -93,9 +123,10 @@ export default function SongDetail() {
                                 </div>
                                 <div>发行时间：{formatPublish(songInfo.publish)}</div>
                                 <div>
-                                    <Button><CustomerServiceOutlined />播放</Button>
-                                    <Button onClick={() => { handleLikeClick(songInfo.id) }}><HeartOutlined />我喜欢</Button>
-                                    <Button><PlusSquareOutlined />收藏</Button>
+                                    <Button onClick={() => { handlePlayClick(songInfo.id) }}><CustomerServiceOutlined />播放</Button>
+                                    {
+                                        token ? <Button onClick={() => { handleLikeClick(songInfo.id) }}><HeartOutlined />我喜欢</Button> : null
+                                    }
                                 </div>
                             </span>
                         </div>
@@ -117,7 +148,7 @@ export default function SongDetail() {
                                 songInfo.mv.map((mv) => (
                                     <div key={mv.id} className='song-content-mv'>
                                         <a href='#' onClick={(e) => { e.preventDefault(); }} >
-                                            <img src={`http://localhost:8000${mv.url}/mask/${mv.id}.png`} alt={mv.name} loading='lazy' />
+                                            <img src={MVImgURL(mv.url, mv.id)} alt={mv.name} loading='lazy' />
                                             <span className='mask'><PlayCircleOutlined /></span>
                                         </a>
                                         <div><a>{mv.name}</a></div>

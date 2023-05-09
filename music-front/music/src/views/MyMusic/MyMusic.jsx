@@ -5,7 +5,6 @@ import cookie from 'react-cookies';
 import './myMusic.scss';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
-
 export default function MyMusic() {
 
     const token = cookie.load('jwtToken')

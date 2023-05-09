@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom';
 import { getSingerList } from '../../api/singer';
 import { throttleNow } from '../../utils/throttle';
 import { useClickNavigate } from '../Common/Hooks/useClickNavigate';
+import { SingerImgURL } from '../../utils/staticURL';
 
 export default function Singer() {
     const tagDefs = [
@@ -138,7 +139,7 @@ export default function Singer() {
                                     handleSingerClick(singer.id)
                                 }}
                             >
-                                <img className='singer-content-item-img' src={`http://localhost:8000${singer.url}/${singer.id}.png`}
+                                <img className='singer-content-item-img' src={SingerImgURL(singer.url, singer.id)}
                                     alt={singer.name} loading='lazy' />
                             </a>
                             <a href='#' className='singer-content-item-font'

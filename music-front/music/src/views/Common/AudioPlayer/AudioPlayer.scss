@@ -1,0 +1,291 @@
+@import '../Styles/common.scss';
+
+.audio-player {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    top: 100%;
+    transform: translateY(-100%);
+    height: 160px;
+    width: 100%;
+    background-color: $mainBackGround-color;
+    border-top: 1px solid $subFont-color;
+
+    >div {
+        display: grid;
+        grid-template-columns: 100px 500px 400px 200px;
+        min-width: 1200px;
+        height: 100%;
+
+        .audio-info {
+            display: grid;
+            grid-template-rows: 110px auto;
+            color: $subFont-color;
+
+            >span {
+                justify-self: center;
+                align-self: center;
+                width: 100px;
+                height: 100px;
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+
+            >div {
+                font-size: $subFont-size;
+                width: 90%;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+        }
+
+        .audio-control {
+            display: grid;
+            grid-template-rows: 2fr 1fr 1fr;
+            align-items: center;
+            justify-items: center;
+
+            >span {
+                align-self: start;
+                color: $mainFont-color;
+            }
+
+            >div {
+                display: flex;
+
+                .ant-btn {
+                    background-color: $mainBackGround-color;
+                    border: transparent;
+                    color: $mainFont-color;
+                    box-shadow: none;
+                    margin: 10px;
+                    height: 50px;
+                    width: 50px;
+                }
+
+                .ant-btn:hover {
+                    background-color: $mainBackGround-color;
+                    color: $activeBackGround-color;
+                    border-color: $subFont-color;
+                }
+
+                button {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    span {
+                        font-size: $bigFont-size;
+                    }
+                }
+            }
+
+            >input[type=range] {
+                width: 350px;
+            }
+        }
+
+        .audio-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            justify-items: center;
+            align-items: center;
+        }
+
+        .audio-lyric {
+            padding: 20px 0;
+            overflow: auto;
+            font-size: $subFont-size;
+            color: $mainFont-color;
+
+            >div {
+                display: grid;
+                justify-content: center;
+                height: 20px;
+            }
+
+            &::-webkit-scrollbar {
+                width: 0px;
+            }
+
+            .audio-lyric-line-selected {
+                color: $activeBackGround-color;
+            }
+        }
+
+        .audio-list {
+
+            .ant-btn {
+                background-color: $mainBackGround-color;
+                border: transparent;
+                color: $mainFont-color;
+                box-shadow: none;
+                margin: 10px;
+                height: 50px;
+                width: 50px;
+            }
+
+            .ant-btn:hover {
+                background-color: $mainBackGround-color;
+                color: $activeBackGround-color;
+                border-color: $subFont-color;
+            }
+
+            button {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                span {
+                    font-size: $bigFont-size;
+                }
+            }
+        }
+    }
+
+    >span {
+        display: grid;
+        justify-self: center;
+        align-items: center;
+        font-size: $middleFont-size;
+    }
+}
+
+.audio-play-list {
+    display: grid;
+    grid-template-rows: 50px auto;
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 430px;
+    height: 500px;
+    padding: 20px 20px 35px 50px;
+    background-color: $activeFont-color;
+    border: 1px solid $subFont-color;
+    border-right-color: transparent;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+
+    >div:first-child {
+        display: grid;
+
+        a {
+            justify-self: end;
+            color: $mainFont-color;
+
+            &:hover {
+                color: $activeBackGround-color;
+            }
+        }
+    }
+
+    .audio-play-list-item:nth-child(even) {
+        background-color: $activeFont-color;
+    }
+
+    .audio-play-list-item {
+        display: grid;
+        grid-template-columns: 4fr 2fr 1fr;
+        align-items: center;
+        height: 50px;
+        line-height: 1;
+        color: $mainFont-color;
+        background-color: $mainBackGround-color;
+
+        &:hover {
+            >span span {
+                display: flex;
+            }
+        }
+
+        >span {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            min-width: 50px;
+
+            a:not(:has(span)) {
+                width: 100%;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                margin-right: 20px;
+                color: $mainFont-color;
+
+                &:hover {
+                    color: $activeBackGround-color;
+                }
+            }
+
+            span {
+                display: none;
+                margin-left: 8px;
+                font-size: 25px;
+                color: $activeBackGround-color;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .audio-play-list-item-selected {
+        background-color: $activeBackGround-color !important;
+        color: $activeFont-color;
+
+        >span {
+            a:not(:has(span)) {
+                color: $activeFont-color;
+
+                &:hover {
+                    color: $activeFont-color;
+                }
+            }
+
+            span {
+                color: $activeFont-color;
+            }
+        }
+    }
+
+    >div:last-child {
+        overflow: auto;
+    }
+
+    >div:last-child::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    >div:last-child::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 5px $subFont-color;
+        background: $subFont-color;
+    }
+
+    >div:last-child::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 5px $subFont-color;
+        border-radius: 0;
+        background: $mainBackGround-color;
+
+    }
+}
+
+.audio-play-null {
+    display: none;
+}
+
+.audio-list-sound {
+    position: fixed;
+    left: calc(50% + 600px - 115px);
+    bottom: 225px;
+
+    input {
+        position: fixed;
+        transform: rotate(-90deg);
+        z-index: 10;
+    }
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { PlayCircleOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { useClickNavigate } from '../../Common/Hooks/useClickNavigate';
+import { MVImgURL } from '../../../utils/staticURL';
 
 export default function MVDisplay({ data }) {
 
@@ -13,7 +14,7 @@ export default function MVDisplay({ data }) {
                     data.map((mv) => (
                         <div key={mv.id} className='singerdefault-mvList-item'>
                             <a href='#' onClick={(e) => { e.preventDefault(); handleMVClick(mv.id) }} >
-                                <img src={`http://localhost:8000${mv.url}/mask/${mv.id}.png`} alt={mv.name} loading='lazy' />
+                                <img src={MVImgURL(mv.url, mv.id)} alt={mv.name} loading='lazy' />
                                 <span className='mask'><PlayCircleOutlined /></span>
                             </a>
                             <div>

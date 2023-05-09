@@ -26,11 +26,17 @@ const persistSearchConfig = {
     storage
 }
 
+const persistPlayConfig = {
+    key: 'play',
+    version: 1,
+    storage
+}
+
 const store = configureStore({
     reducer: {
         login: persistReducer(persistConfig, loginReducer),
         search: persistReducer(persistSearchConfig, searchReducer),
-        // user: persistReducer(persistConfig, userReducer)
+        user: persistReducer(persistPlayConfig, userReducer)
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
         serializableCheck: {

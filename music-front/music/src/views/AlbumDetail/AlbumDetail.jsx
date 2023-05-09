@@ -10,6 +10,8 @@ import { formatPublish } from '../../utils/format';
 import SongListComponent from '../Common/Hooks/useSongList/useSongList';
 import { useSelector } from 'react-redux';
 import { setLikeAlbum } from '../../api/user';
+import cookie from 'react-cookies';
+import { AlbumImgURL } from '../../utils/staticURL';
 
 export default function AlbumDetail() {
 
@@ -18,6 +20,8 @@ export default function AlbumDetail() {
     const location = useLocation()
     const [albumInfo, setAlbumInfo] = useState([])
     const loginInfos = useSelector((state) => state.login.loginInfos)
+
+    const token = cookie.load('jwtToken')
 
     useEffect(() => {
         getAlbumInfo(id).then((res) => {
@@ -56,7 +60,7 @@ export default function AlbumDetail() {
                     ? <>
                         <div className='album-info'>
                             <a href='#' onClick={(e) => { e.preventDefault(e) }} >
-                                <img src={`http://localhost:8000${albumInfo.url}/${albumInfo.id}.png`} alt={albumInfo.name} loading='lazy' />
+                                <img src={AlbumImgURL(albumInfo.url, albumInfo.id)} alt={albumInfo.name} loading='lazy' />
                             </a>
                             <span className='album-info-detail'>
                                 <div>{albumInfo.name}</div>
@@ -72,7 +76,9 @@ export default function AlbumDetail() {
                                 </div>
                                 <div>发行时间：{formatPublish(albumInfo.publish)}</div>
                                 <div>
-                                    <Button onClick={() => { handleLikeClick(albumInfo.id) }}><HeartOutlined />我喜欢</Button>
+                                    {
+                                        token ? <Button onClick={() => { handleLikeClick(albumInfo.id) }}><HeartOutlined />我喜欢</Button> : null
+                                    }
                                 </div>
                             </span>
                         </div>

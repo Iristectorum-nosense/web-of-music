@@ -21,7 +21,6 @@ class MV(models.Model):
     desc = models.CharField(max_length=512)
     publish = models.DateTimeField()
     play_count = models.IntegerField(default=0)
-    star_count = models.IntegerField(default=0)
     tags = models.ManyToManyField(MVTag)
 
     class Meta:
@@ -37,7 +36,6 @@ class Song(models.Model):
     publish = models.DateTimeField()
     time = models.DurationField(default=timedelta(seconds=0))
     play_count = models.IntegerField(default=0)
-    star_count = models.IntegerField(default=0)
     mv = models.ForeignKey('MV', on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:

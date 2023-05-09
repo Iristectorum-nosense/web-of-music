@@ -19,6 +19,7 @@ urlpatterns = [
     path('singerMV', views.get_singer_mv),
     path('albumInfo', views.get_album_info),
     path('songInfo', views.get_song_info),
+    path('MVInfo', views.get_mv_info),
     path('home', views.get_home),
     path('searchBar', views.get_search_bar),
     path('search', views.get_search),
@@ -39,6 +40,11 @@ urlpatterns = [
     path('user/setPlaySong', views.set_play_song),
     path('user/deletePlaySong', views.delete_play_song),
     path('user/deletePlay', views.delete_my_play),
+    path('playListInfo', views.get_play_list_info),
+    path('play/likeSong', views.modify_like_song),
+    path('play/likeSongList', views.modify_like_song_list),
+    path('play/playSongCount', views.set_play_song_count),
+    path('play/playMVCount', views.set_play_mv_count),
 
     path('user/insert', views.insert),
 ]

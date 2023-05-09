@@ -23,3 +23,21 @@ export const getSingerMV = (data) => {
         }
     })
 }
+
+//获取MV详情页信息
+export const getMVInfo = (data) => {
+    const url = `MVInfo`;
+    return instance.get(url, {
+        params: {
+            id: data
+        }
+    })
+}
+
+//MV播放次数
+export const setPlayMVCount = (data) => {
+    const url = `play/playMVCount`;
+    return instance.post(url, {
+        playId: data
+    })
+}

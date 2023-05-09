@@ -36,3 +36,21 @@ export const getLyric = async (data) => {
     const url = data;
     return instance.get(url);
 }
+
+//获取播放队列歌曲信息
+export const getPlayListInfo = (data) => {
+    const url = `playListInfo`;
+    return instance.post(url, {
+        userId: data.userId,
+        email: data.email,
+        playIdList: data.playIdList
+    })
+}
+
+//歌曲播放次数
+export const setPlaySongCount = (data) => {
+    const url = `play/playSongCount`;
+    return instance.post(url, {
+        playId: data
+    })
+}

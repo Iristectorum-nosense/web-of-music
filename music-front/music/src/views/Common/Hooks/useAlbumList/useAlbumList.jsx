@@ -9,6 +9,7 @@ import { useClickNavigate } from '../useClickNavigate';
 import { deleteLikeAlbum } from '../../../../api/user';
 import { useSelector } from 'react-redux';
 import { message } from 'antd';
+import { AlbumImgURL } from '../../../../utils/staticURL';
 
 function useAlbumList(setReload) {
 
@@ -60,7 +61,7 @@ export default function AlbumListComponent({ haveImg = true, haveDelete = true, 
                                 <span>
                                     {
                                         haveImg
-                                            ? <a href='#' onClick={(e) => { e.preventDefault(); handleAlbumClick(album.id) }} ><img src={`http://localhost:8000${album.url}/${album.id}.png`} alt={album.name} loading='lazy' /></a>
+                                            ? <a href='#' onClick={(e) => { e.preventDefault(); handleAlbumClick(album.id) }} ><img src={AlbumImgURL(album.url, album.id)} alt={album.name} loading='lazy' /></a>
                                             : null
                                     }
                                     <a href='#' onClick={(e) => { e.preventDefault(); handleAlbumClick(album.id) }} >{album.name}</a>

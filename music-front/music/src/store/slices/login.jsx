@@ -2,8 +2,13 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginByPw, loginByCap, register, resetPassword } from "../../api/login";
 import cookie from 'react-cookies';
 import { message } from "antd";
+import { modifyLikeSongList } from "../../api/user";
 
-export const loginAction = createAsyncThunk('login/loginAction', async (payload) => {
+export const loginAction = createAsyncThunk('login/loginAction', async (payload, { getState }) => {
+
+    const { user } = getState()
+    const playInfoList = user.playList
+
     switch (payload.method) {
         case 'byPw':
             let pwToken = await loginByPw(null, 'get');
@@ -14,8 +19,15 @@ export const loginAction = createAsyncThunk('login/loginAction', async (payload)
                         message.error(res.data.message)
                     } else {
                         message.success('登录成功')
-                        cookie.remove('csrftoken')
+                        cookie.remove('csrftoken', {})
                         pwRes = res.data
+
+                        let payload = {
+                            userId: res.data.loginInfos.userId,
+                            email: res.data.loginInfos.email,
+                            playList: playInfoList
+                        }
+                        modifyLikeSongList(payload).then(() => { }).catch(() => { })
                     }
                 }).catch(() => { })
             }
@@ -29,8 +41,15 @@ export const loginAction = createAsyncThunk('login/loginAction', async (payload)
                         message.error(res.data.message)
                     } else {
                         message.success('登录成功')
-                        cookie.remove('csrftoken')
+                        cookie.remove('csrftoken', {})
                         capRes = res.data
+
+                        let payload = {
+                            userId: res.data.loginInfos.userId,
+                            email: res.data.loginInfos.email,
+                            playList: playInfoList
+                        }
+                        modifyLikeSongList(payload).then(() => { }).catch(() => { })
                     }
                 }).catch(() => { })
             }
@@ -39,7 +58,11 @@ export const loginAction = createAsyncThunk('login/loginAction', async (payload)
     }
 })
 
-export const registerAction = createAsyncThunk('login/registerAction', async (payload) => {
+export const registerAction = createAsyncThunk('login/registerAction', async (payload, { getState }) => {
+
+    const { user } = getState()
+    const playInfoList = user.playList
+
     let token = await register(null, 'get');
     let response = {}
     if (Object.prototype.toString.call(token) === '[object Object]') {
@@ -48,8 +71,15 @@ export const registerAction = createAsyncThunk('login/registerAction', async (pa
                 message.error(res.data.message)
             } else {
                 message.success('注册成功')
-                cookie.remove('csrftoken')
+                cookie.remove('csrftoken', {})
                 response = res.data
+
+                let payload = {
+                    userId: res.data.loginInfos.userId,
+                    email: res.data.loginInfos.email,
+                    playList: playInfoList
+                }
+                modifyLikeSongList(payload).then(() => { }).catch(() => { })
             }
         }).catch(() => { })
     }
@@ -65,7 +95,7 @@ export const resetPwAction = createAsyncThunk('login/resetPwAction', async (payl
                 message.error(res.data.message)
             } else {
                 message.success('修改密码成功')
-                cookie.remove('csrftoken')
+                cookie.remove('csrftoken', {})
                 response = res.data
             }
         }).catch(() => { })

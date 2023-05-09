@@ -1,7 +1,12 @@
 import { useNavigate } from "react-router-dom";
+import { setPlayMVCount } from "../../../api/mv";
 
 export function useClickNavigate() {
     const navigate = useNavigate()
+
+    const playCount = async (id) => {
+        await setPlayMVCount(id)
+    }
 
     const handleSingerClick = (id) => {
         navigate(`/singerDetail/${id}`)
@@ -28,6 +33,7 @@ export function useClickNavigate() {
     }
 
     const handleMVClick = (id) => {
+        playCount(id)
         navigate(`/mvDetail/${id}`)
     }
 

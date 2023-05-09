@@ -8,6 +8,7 @@ import '../MyMusicLike.scss';
 import PageComponent from '../../Common/Hooks/usePagination/usePagination';
 import { useClickNavigate } from '../../Common/Hooks/useClickNavigate';
 import { message } from 'antd';
+import { MVImgURL } from '../../../utils/staticURL';
 
 export default function LikeMV() {
 
@@ -62,7 +63,7 @@ export default function LikeMV() {
                                 likeMV.mvs.map((mv) => (
                                     <div key={mv.id} className='like-mv-item'>
                                         <a href='#' onClick={(e) => { e.preventDefault(); handleMVClick(mv.id) }} >
-                                            <img src={`http://localhost:8000${mv.url}/mask/${mv.id}.png`} alt={mv.name} loading='lazy' />
+                                            <img src={MVImgURL(mv.url, mv.id)} alt={mv.name} loading='lazy' />
                                             <span className='mask'><PlayCircleOutlined /></span>
                                         </a>
                                         <div className='like-mv-item-delete'>

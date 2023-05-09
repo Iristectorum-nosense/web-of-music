@@ -422,7 +422,7 @@ def get_mv_list(request):
             mvObj = mvObj.filter(tags__name=version_list[version - 1])
 
         if order != 1:
-            mvObj = mvObj.order_by('play_count', 'star_count', 'id')
+            mvObj = mvObj.order_by('play_count', 'id')
         else:
             mvObj = mvObj.order_by('-publish', 'id')
 
@@ -459,7 +459,7 @@ def get_rank_list(request):
 
         songObj = Song.objects.all()
         if top == 1:
-            songObj = songObj.order_by('play_count', 'star_count', 'id')
+            songObj = songObj.order_by('play_count', 'id')
             songObj = songObj[:20]
             songList = []
             for song in songObj:
@@ -505,7 +505,7 @@ def get_rank_list(request):
             return JsonResponse({'code': 200, 'rankList': songList})
 
         if top in (3, 4, 5):
-            songObj = songObj.order_by('play_count', 'star_count', 'id')
+            songObj = songObj.order_by('play_count', 'id')
             songList = []
             for song in songObj:
                 if len(songList) == 20:
@@ -565,7 +565,7 @@ def get_singer_default(request):
         if singerObj.exists():
             singer = Singer.objects.get(id=id)
 
-            songObj = singer.songs.all().order_by('play_count', 'star_count', 'id')[:10]
+            songObj = singer.songs.all().order_by('play_count', 'id')[:10]
             songList = []
             for song in songObj:
                 singerObj = song.singer_set.all()
@@ -595,7 +595,7 @@ def get_singer_default(request):
                 }
                 albumList.append(album_dict)
 
-            mvObj = singer.mvs.all().order_by('play_count', 'star_count', 'id')[0:4]
+            mvObj = singer.mvs.all().order_by('play_count', 'id')[0:4]
             mvList = []
             for mv in mvObj:
                 mv_dict = {
@@ -633,7 +633,7 @@ def get_singer_song(request):
             if singer.songs.count() < (index - 1) * limit or index < 0:
                 return JsonResponse({'code': 405, 'message': '没有该信息'})
 
-            songObj = singer.songs.all().order_by('play_count', 'star_count', 'id')[(index - 1) * limit: index * limit]
+            songObj = singer.songs.all().order_by('play_count', 'id')[(index - 1) * limit: index * limit]
             songList = []
             for song in songObj:
                 singerObj = song.singer_set.all()
@@ -850,6 +850,41 @@ def get_song_info(request):
     return JsonResponse({'code': 503, 'message': 'No method'})
 
 
+def get_mv_info(request):
+    if request.method == 'GET':
+        id = int(request.GET.get('id', -1))
+
+        mvObj = MV.objects.filter(id=id)
+
+        if mvObj.exists():
+            mv = MV.objects.get(id=id)
+
+            singerObj = mv.singer_set.all()
+            singerList = []
+            for singer in singerObj:
+                singer_dict = {
+                    'id': singer.id,
+                    'name': singer.name
+                }
+                singerList.append(singer_dict)
+
+            mv_info = {
+                'id': mv.id,
+                'url': mv.url,
+                'name': mv.name,
+                'publish': mv.publish,
+                'desc': mv.desc,
+                'play_count': mv.play_count,
+                'singers': singerList,
+            }
+
+            return JsonResponse({'code': 200, 'mvInfo': mv_info})
+        else:
+            return JsonResponse({'code': 405, 'message': '没有该信息'})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
 def get_home(request):
     if request.method == 'GET':
         albumObj = Album.objects.all().order_by('-publish', 'id')[:16]
@@ -871,7 +906,7 @@ def get_home(request):
             }
             albumList.append(album_dict)
 
-        topObj_hot = Song.objects.all().order_by('play_count', 'star_count', 'id')[:3]
+        topObj_hot = Song.objects.all().order_by('play_count', 'id')[:3]
         topList_hot = []
         for top_hot in topObj_hot:
             top_hot_singerObj = top_hot.singer_set.all()
@@ -907,7 +942,7 @@ def get_home(request):
             }
             topList_new.append(top_dict)
 
-        topObj_china = Song.objects.all().order_by('play_count', 'star_count', 'id')
+        topObj_china = Song.objects.all().order_by('play_count', 'id')
         topList_china = []
         for top_china in topObj_china:
             if len(topList_china) == 3:
@@ -935,7 +970,7 @@ def get_home(request):
             'china': topList_china
         }
 
-        mvObj = MV.objects.all().order_by('play_count', 'star_count', 'id')[:30]
+        mvObj = MV.objects.all().order_by('play_count', 'id')[:30]
         mvList = []
         for mv in mvObj:
             mv_singerObj = mv.singer_set.all()
@@ -1665,13 +1700,181 @@ def delete_my_play(request):
     return JsonResponse({'code': 503, 'message': 'No method'})
 
 
+@csrf_exempt
+def get_play_list_info(request):
+    if request.method == 'POST':
+        json_body = json.loads(request.body)
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = json_body.get('userId', None)
+        user_email = json_body.get('email', None)
+        play_id_list = json_body.get('playIdList', [])
+
+        if len(play_id_list) == 0:
+            return JsonResponse({'code': 405, 'message': '未选中'})
+
+        if len(token) == 0:
+            play_info_list = []
+            for play_id in play_id_list:
+                if Song.objects.filter(id=play_id).exists():
+                    song = Song.objects.get(id=play_id)
+                    singerObj = song.singer_set.all()
+                    singerList = []
+                    for singer in singerObj:
+                        singer_dict = {
+                            'id': singer.id,
+                            'name': singer.name
+                        }
+                        singerList.append(singer_dict)
+                    song_dict = {
+                        'id': song.id,
+                        'url': song.url,
+                        'name': song.name,
+                        'time': song.time,
+                        'singers': singerList,
+                        'isLike': bool(0)
+                    }
+                    play_info_list.append(song_dict)
+
+            return JsonResponse({'code': 200, 'playInfoList': play_info_list})
+
+        if len(token) != 0:
+            if verifyJWT(token, str(user_id) + user_email) == 0:
+                return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+            if not User.objects.filter(id=user_id, email=user_email).exists():
+                return JsonResponse({'code': 500, 'message': 'Database error'})
+
+            userObj = User.objects.get(id=user_id, email=user_email)
+            play_info_list = []
+            for play_id in play_id_list:
+                if Song.objects.filter(id=play_id).exists():
+                    song = Song.objects.get(id=play_id)
+                    singerObj = song.singer_set.all()
+                    singerList = []
+                    for singer in singerObj:
+                        singer_dict = {
+                            'id': singer.id,
+                            'name': singer.name
+                        }
+                        singerList.append(singer_dict)
+                    song_dict = {
+                        'id': song.id,
+                        'url': song.url,
+                        'name': song.name,
+                        'time': song.time,
+                        'singers': singerList,
+                        'isLike': userObj.songs.filter(id=play_id).exists()
+                    }
+                    play_info_list.append(song_dict)
+
+            return JsonResponse({'code': 200, 'playInfoList': play_info_list})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
 
 
+@csrf_exempt
+def modify_like_song(request):
+    if request.method == 'POST':
+        json_body = json.loads(request.body)
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = json_body.get('userId', None)
+        user_email = json_body.get('email', None)
+        play_id = json_body.get('playId', None)
+
+        if not Song.objects.filter(id=play_id).exists():
+            return JsonResponse({'code': 405, 'message': '未选中'})
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        userObj = User.objects.get(id=user_id, email=user_email)
+
+        if userObj.songs.filter(id=play_id).exists():
+            song = Song.objects.get(id=play_id)
+            userObj.songs.remove(song)
+            userObj.song_num -= 1
+            userObj.save()
+        else:
+            song = Song.objects.get(id=play_id)
+            userObj.songs.add(song)
+            userObj.song_num += 1
+            userObj.save()
+
+        return JsonResponse({'code': 200})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
 
 
+@csrf_exempt
+def modify_like_song_list(request):
+    if request.method == 'POST':
+        json_body = json.loads(request.body)
+        token = request.META.get('HTTP_AUTHORIZATION', '')
+        user_id = json_body.get('userId', None)
+        user_email = json_body.get('email', None)
+        play_list = json_body.get('playList', None)
+
+        if verifyJWT(token, str(user_id) + user_email) == 0:
+            return JsonResponse({'code': 403, 'message': 'Forbidden'})
+
+        if not User.objects.filter(id=user_id, email=user_email).exists():
+            return JsonResponse({'code': 500, 'message': 'Database error'})
+
+        userObj = User.objects.get(id=user_id, email=user_email)
+
+        for play in play_list:
+            play_id = play['id']
+            play_like = play['isLike']
+
+            if userObj.songs.filter(id=play_id).exists() and not play_like:
+                song = Song.objects.get(id=play_id)
+                userObj.songs.remove(song)
+                userObj.song_num -= 1
+                userObj.save()
+            if not userObj.songs.filter(id=play_id).exists() and play_like:
+                song = Song.objects.get(id=play_id)
+                userObj.songs.add(song)
+                userObj.song_num += 1
+                userObj.save()
+
+        return JsonResponse({'code': 200})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
 
 
+@csrf_exempt
+def set_play_song_count(request):
+    if request.method == 'POST':
+        json_body = json.loads(request.body)
+        play_id = json_body.get('playId', None)
 
+        if Song.objects.filter(id=play_id).exists():
+            song = Song.objects.get(id=play_id)
+            song.play_count += 1
+            song.save()
+
+        return JsonResponse({'code': 200})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
+
+
+@csrf_exempt
+def set_play_mv_count(request):
+    if request.method == 'POST':
+        json_body = json.loads(request.body)
+        play_id = json_body.get('playId', None)
+
+        if MV.objects.filter(id=play_id).exists():
+            mv = MV.objects.get(id=play_id)
+            mv.play_count += 1
+            mv.save()
+
+        return JsonResponse({'code': 200})
+
+    return JsonResponse({'code': 503, 'message': 'No method'})
 
 
 def insert(request):
@@ -2052,3 +2255,13 @@ def insert(request):
 
     print('done')
     return JsonResponse({'code': 200})
+
+
+class AcceptRangesMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        response['Accept-Ranges'] = 'bytes'
+        return response

@@ -2,6 +2,7 @@ import React from 'react';
 import './HomeMV.scss';
 import { useClickNavigate } from '../../Common/Hooks/useClickNavigate';
 import { PlayCircleOutlined } from '@ant-design/icons';
+import { MVImgURL } from '../../../utils/staticURL';
 
 export default function HomeMVComponent({ data = [], index = 1 }) {
 
@@ -14,7 +15,7 @@ export default function HomeMVComponent({ data = [], index = 1 }) {
                 showData.map((mv) => (
                     <div key={mv.id} className='home-mv-item'>
                         <a href='#' onClick={(e) => { e.preventDefault(); handleMVClick(mv.id) }} >
-                            <img src={`http://localhost:8000${mv.url}/mask/${mv.id}.png`} alt={mv.name} loading='lazy' />
+                            <img src={MVImgURL(mv.url, mv.id)} alt={mv.name} loading='lazy' />
                             <span className='mask'><PlayCircleOutlined /></span>
                         </a>
                         <div>
