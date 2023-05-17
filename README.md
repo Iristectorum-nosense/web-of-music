@@ -1,4 +1,7 @@
 # 享听音乐在线平台
+<img src='https://github.com/Iristectorum-nosense/web-of-music/blob/master/assets/%E5%B1%95%E7%A4%BA1.png' />
+
+<img src='https://github.com/Iristectorum-nosense/web-of-music/blob/master/assets/%E5%B1%95%E7%A4%BA2.png' />
 
 ## 项目简介
 本项目是一个基于 React + Django 框架的在线听歌平台，该项目实现了用户登录，底部导航栏播放器等基本功能，包括我的音乐、首页、排行榜、MV、歌手、歌曲、专辑等页面的展示。
