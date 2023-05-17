@@ -89,7 +89,7 @@ Django 框架建立于 python3.9 环境
 │  ├─ package.json
 │  └─ README.md
 |
-└─ music-end  //后端文件入口
+└─ music-end  // 后端文件入口
 │  ├─ music
 │  |  ├─ settings.py                     # 配置文件，包括跨域配置、数据库连接、中间件使用、邮箱发送配置、请求头配置等
 │  |  |...
